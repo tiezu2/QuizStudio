@@ -1,0 +1,61 @@
+{
+ "id": "bank_textbook_bigq",
+ "title": "Java OOP 教材大题（39 题 · 从照片转录）",
+ "subject": "Java语言程序设计III",
+ "time": "2026-11-17",
+ "chapters": [
+  {"id": 1, "name": "第 7 章 · 类与对象", "tag": "属性 / 构造 / 访问器"},
+  {"id": 2, "name": "第 8 章 · 继承与多态", "tag": "extends / super / 覆盖"},
+  {"id": 3, "name": "第 9 章 · 抽象类与接口", "tag": "abstract / interface"},
+  {"id": 4, "name": "第 10 章 · 多态与综合", "tag": "多态 / 工厂 / 接口引用"}
+ ],
+ "questions": [
+  {"type": "code", "ch": 1, "score": 10, "stem": "设计一个 MP3 类，并进行测试，要求如下：\n(a) 属性包括：MP3 品牌 brand（String 类型）、颜色 color（String 类型）和存储容量 capacity（double 类型），并且所有属性为私有。\n(b) 至少提供一个有参数的构造方法（要求品牌和颜色可以初始化为任意值，但存储容量的初始值必须为 0）。\n(c) 为私有属性提供访问器方法。\n(d) 测试类中使用有参构造方法创建一个 MP3 对象，再使用访问器方法对颜色重新赋值，最后调用访问器方法输出该对象的所有属性值。"},
+  {"type": "code", "ch": 1, "score": 10, "stem": "设计一个课程类，并进行测试，要求如下：\n(a) 创建包 cn.edu.neusoft，在其中创建课程类 Course，包含课程编号 courseId、课程名称 courseName、上课地点 classroom、任课教师 teacherName（都是 String 类型，分别用 private、缺省、protected 等修饰符）。\n(b) 提供一个有参的构造方法（要求包含课程编号等四个属性）。\n(c) 在课程类的 main 函数中创建一个课程类对象，实验四个属性的可访问性。\n(d) 在 cn.edu.neusoft 包中创建测试类 Training8_2_1，创建一个课程类对象，实验四个属性的可访问性。\n(e) 创建包 cn.edu.dlut，在其中创建测试类 Training8_2_2，创建一个课程类对象，实验四个属性的可访问性。"},
+  {"type": "code", "ch": 1, "score": 10, "stem": "设计一个汽车类 Car，并进行测试，要求如下：\n(a) 属性包括：汽车品牌 brand（String 类型）、颜色 color（String 类型）和速度 speed（double 类型），并且所有属性为私有。\n(b) 至少提供一个有参数的构造方法（要求品牌和颜色可以初始化为任意值，但速度的初始值必须为 0）。\n(c) 为私有属性提供访问器方法。注意：汽车品牌一旦初始化之后不能修改。\n(d) 定义测试类 CarTest，在其 main 方法中创建一个品牌为 \"benz\"、颜色为 \"black\" 的汽车，输出该汽车信息。"},
+  {"type": "code", "ch": 1, "score": 10, "stem": "设计一个学生类 Student，并进行测试，要求如下：\n(a) Student 类中包含姓名、成绩两个私有属性。分别给这两个属性定义两个方法，一个方法用于设置值，一个方法用于获取值。\n(b) Student 类中定义一个无参数的构造方法（不执行任何操作）和一个接收两个参数的构造方法，两个参数分别为姓名和成绩赋值。\n(c) 测试类中创建两个 Student 对象，一个使用无参数的构造方法，并用 setter 方法给姓名和成绩赋值；另一个使用有参数的构造方法，在构造方法中给姓名和成绩赋值。最后输出这两个 Student 对象的信息。"},
+  {"type": "code", "ch": 1, "score": 10, "stem": "设计一个洗衣机类 WashingMachine，并进行测试，要求如下：\n(a) 属性包括：品牌 brand（String 类型）、容量 capacity（整数类型）和是否开机 isOn（boolean 类型），并且所有属性为私有。\n(b) 提供一个有参的构造方法（要求包括品牌等三个属性）。\n(c) 定义方法 turnOff 将洗衣机的状态设置为关机，方法 turnOn 将洗衣机的状态设置为开机，方法 washClothes 接收一个整形的参数 clothesWeight，表示待洗衣物的重量（公斤）：如果洗衣机处于开机状态，并且洗衣机容量足够洗这些衣物，输出“洗衣机正在洗衣服”，否则输出“洗衣机无法洗衣服”。\n(d) 定义测试类，在其 main 方法中创建一个洗衣机对象，调用 turnOn 方法开机，再调用 washClothes 方法洗衣服。"},
+  {"type": "code", "ch": 1, "score": 10, "stem": "定义一个图书类 Book，并进行测试，要求如下：\n(a) 属性包括：书名 name（String 类型）、作者 author（String 类型）、单价 price（double 类型）和数量 amount（int 类型），并且所有属性为私有。\n(b) 提供一个有参的构造方法。\n(c) 为私有属性提供访问器方法，但要求书名和作者一旦初始化后不能更改。\n(d) 提供计算图书总价的方法 totalPrice（图书总价 = 单价 × 数量）。\n(e) 定义测试类，在其 main 方法中创建一本书名为 \"java\"、作者为 \"张三\"、单价为 30、数量为 2000 的图书，并计算输出该图书的总价。"},
+  {"type": "code", "ch": 1, "score": 10, "stem": "编写一个类 Calculator，并进行测试，要求如下：\n(a) 私有属性包括：x、y（float 类型），提供这两个属性的访问器方法；\n(b) 提供 add 方法，进行 x 和 y 的加法运算；提供 subtract 方法，进行 x 和 y 的减法运算；提供 multiply 方法，进行 x 和 y 的乘法运算；提供 divide 方法，进行 x 和 y 的除法运算；\n(c) 在测试类中使用无参数的构造方法创建 Calculator 对象，调用访问器方法分别给属性 x 和 y 赋值，然后分别调用加减乘除四个方法，输出计算结果。"},
+  {"type": "code", "ch": 1, "score": 10, "stem": "设计一个时间类 MyTime，并进行测试，要求如下：\n(a) 属性包括：时 hour（int 类型）、分 minute（int 类型）和秒 second（int 类型），并且所有属性为私有。\n(b) 提供一个有参的构造方法（要求包括时分秒等三个属性）。如果 hour 不在 0~23 范围内，则设置为 0；如果 minute 不在 0~59 范围内，则设置为 0；如果 second 不在 0~59 范围内，则设置为 0。\n(c) 定义方法 displayTime，以 \"HH:MM:SS\" 格式输出时间。例如：3 时 25 分 42 秒输出 \"03:25:42\"。\n(d) 定义测试类，在其 main 方法中创建一个 MyTime 对象，调用 displayTime 方法输出时间。"},
+
+  {"type": "code", "ch": 2, "score": 10, "stem": "在现实生活中，我们常用的打印机有黑白打印机和彩色打印机，它们之间有很多相似的地方，能够找到继承关系。现在要求使用继承来实现这个生活案例。实现思路参考如下：\n(1) 编写父类 Printer（打印机），定义一个方法 print()。\n(2) 编写子类 BlackPrinter（黑白打印机），重写 print() 方法。\n(3) 编写子类 ColorPrinter（彩色打印机），重写 print() 方法。"},
+  {"type": "code", "ch": 2, "score": 10, "stem": "实现一个名为 Person 的类和它的子类 Employee，Employee 有两个子类 Faculty 和 Staff。具体要求如下：\n(1) Person 类中的属性有：姓名 name（String 类型），地址 address（String 类型），电话号码 telephone（String 类型）和电子邮件地址 email（String 类型）；\n(2) Employee 类中的属性有：办公室 office（String 类型），工资 wage（double 类型），受雇日期 hiredate（String 类型）；\n(3) Faculty 类中的属性有：学位 degree（String 类型），级别 level（String 类型）；\n(4) Staff 类中的属性有：职务称号 duty（String 类型）。"},
+  {"type": "code", "ch": 2, "score": 10, "stem": "定义一个 Person 类，它包含的属性有“姓名”和“性别”，为 Person 类派生出子类 Student 类，为 Student 子类添加两个属性年龄和成绩等级（用 A、B、C、D、E 表示），在子类中打印出学生的姓名、性别、年龄及成绩等级。"},
+  {"type": "code", "ch": 2, "score": 10, "stem": "模拟一个学校人员管理系统，其中包含了多个类来表示学校中的不同实体。设计一个名为 SchoolMember 的基类，其中属性为姓名（String name）、ID（String id）；方法为构造函数、显示信息（showInfo()）。并基于该基类创建几个子类来表示学生、教师和管理员。每个子类应包含特定的属性和方法，同时继承基类的一些共通属性和方法。具体要求如下：\n(1) 学生类 Student：继承自 SchoolMember，增加属性年级（int grade），并重写 showInfo() 方法以显示学生的详细信息。\n(2) 教师类 Teacher：继承自 SchoolMember，增加属性教授课程（String course），并重写 showInfo() 方法以显示教师的详细信息。\n(3) 管理员类 Administrator：继承自 SchoolMember，增加属性管理范围（String scope），并重写 showInfo() 方法以显示管理员的详细信息。\n(4) 测试类：设计一个测试类 SchoolSystemTest，在该类中创建学生、教师和管理员对象，并调用它们的 showInfo() 方法来验证程序的正确性。"},
+  {"type": "code", "ch": 2, "score": 10, "stem": "设计一款加密系统，可能会有多种加密算法，例如有 MD5 加密算法和凯撒加密算法，利用继承知识点完成此功能。"},
+  {"type": "code", "ch": 2, "score": 10, "stem": "编写一个学生和教师数据输入和显示程序。学生数据有编号、姓名、班号和成绩，教师数据有编号、姓名、职称和部门。要求将编号、姓名输入和显示设计成一个类 person，并作为学生数据操作类 student 和教师数据操作类 teacher 的父类。"},
+  {"type": "code", "ch": 2, "score": 10, "stem": "设计两个类：Vehicle（车辆）和 Car（汽车）。Vehicle 类包含一些基本的车辆属性（如品牌、型号）和一个方法 describe() 用于打印车辆的基本信息。Car 类继承自 Vehicle 类，并添加一些特定的汽车属性（如座位数、颜色）和一个新方法 getCarDetails() 用于打印汽车的详细信息。"},
+  {"type": "code", "ch": 2, "score": 10, "stem": "设计一个银行账户系统，其中包含不同类型的账户（如储蓄账户和信用卡账户）。定义一个基类 BankAccount，有所有账户类型中共同的属性和方法（如余额、存款和取款），但不同账户类型 SavingsAccount 类（储蓄账户）和 CreditCardAccount（信用卡账户）也可能有各自特有的属性和方法（如信用卡的信用额度、透支费用等）。"},
+
+  {"type": "code", "ch": 3, "score": 10, "stem": "编写一个抽象类 MyAbstractClass，该抽象类有一个抽象方法 abstractMethod()。请完成并修改代码，且无编译问题。"},
+  {"type": "code", "ch": 3, "score": 10, "stem": "编写一个抽象类 Shape，该抽象类有一个抽象方法 getArea() 用于计算图形面积。定义一个长方形类和一个圆形类，作为抽象类 Shape 的子类，并分别实现抽象方法 getArea()。请完成代码，并实现测试类。"},
+  {"type": "code", "ch": 3, "score": 10, "stem": "编写一个抽象类杯子 Cup，该类有一个抽象方法 drink()。水杯、茶杯、酒杯分别作为杯子类的派生类。三个派生类在被调用 drink() 方法时，分别输出字符串：“喝水”、“喝茶”、“喝酒”。请完成代码，并实现测试类。"},
+  {"type": "code", "ch": 3, "score": 10, "stem": "已知抽象类 Base 中定义了 calculate(int x, int y) 方法，该方法的计算方式灵活运用加减乘除四则运算。现有两个 Base 类的派生类 Sub1 和 Sub2。Sub1 的 calculate(int x, int y) 方法的计算规则是：返回 x 与 y 的差值乘以 x 与 y 的乘积；Sub2 的 calculate(int x, int y) 方法的计算规则是：x 与 y 的和值乘以 x 除以 y 的商。请完成 Base、Sub1、Sub2 的代码，使得下面的代码输出的结果正确。\npublic class Main {\n  public static void main(String[] args) {\n    Sub1 sub1 = new Sub1();\n    Sub2 sub2 = new Sub2();\n    int x = 20, y = 5;\n    System.out.println(\"the result of sub1 is: \" + sub1.calculate(x, y));\n    System.out.println(\"the result of sub2 is: \" + sub2.calculate(x, y));\n  }\n}"},
+  {"type": "code", "ch": 3, "score": 10, "stem": "有一个抽象类 Shape，如下所示：\nabstract class Shape{\n    abstract double getVolume();  // 返回物体的体积\n}\n(1) 编写球体类，立方体类和圆柱体类，它们是抽象类 Shape 的子类。\n(2) 编写一个公共类，其中包含 main 方法。在 main 方法中，从键盘上输入 1（表示球体）、2（表示立方体）、3（表示圆柱体）时，调用 get 方法可以分别得到球体、立方体、圆柱体的体积。"},
+  {"type": "code", "ch": 3, "score": 10, "stem": "请使用抽象类，对下面的代码进行优化，使其增加可扩展性。\npublic class NoteBook {\n    String name;\n    public void open() { System.out.println(\"Writing......\"); }\n}\npublic class TextBook {\n    String name;\n    public void open() { System.out.println(\"Reading......\"); }\n}"},
+  {"type": "code", "ch": 3, "score": 10, "stem": "定义抽象类 Employee 表示职员：\n(1) 包含受保护的属性：姓名、基本工资、家庭住址、该月休假天数；为 Employee 类提供构造函数，为每个属性赋值；编写 show() 方法显示所有信息；编写方法 calculateLessPay() 计算扣除（规则：无休假不扣除；5 天以内（包含 5 天）扣除基本工资的 4 分之 1；超过 5 天扣除基本工资的一半）。编写抽象方法 calculateTotal() 计算工资总额。\n(2) 编写子类 Director 表示董事长：包含私有属性 transportAllowance 表示交通补助；重写 calculateTotal() 方法计算董事长的工资总额（计算标准为：基本工资 + 岗位津贴 5000 + 交通补助）；重写 show() 方法显示基本信息，并显示董事长的总工资和实际工资（总工资 - 应扣工资）。\n(3) 编写子类 Manager 表示部门经理：类中包含属性 Department 表示部门名称；重写 calculateTotal() 方法计算部门经理的工资总额（计算标准为：基本工资 + 岗位津贴 1500 + 绩效工资；绩效工资为基本工资的 20%）；重写 show() 方法，显示基本信息、所在部门名称，以及总工资与实际工资（总工资 - 应扣工资）。\n(4) 在测试类中分别创建董事长与部门经理的实例，分别调用 show() 方法显示信息。"},
+  {"type": "code", "ch": 3, "score": 10, "stem": "创建一个接口，名字为 MyInterface。该接口中至少有一个 String 类型的常量，名为 myVar，值为 \"This is MyInterface.\"。该接口有 1 个返回值类型是 void、名为 testMethod、无参数的抽象方法。"},
+  {"type": "code", "ch": 3, "score": 10, "stem": "编写一个抽象类 Computer，该类有 String 类型的成员变量 ip；有返回值类型为 void 的 printIp() 方法，该方法的作用是输出 ip 值；有一个返回值类型为 void、名为 getFnLocation() 的抽象方法。编写一个接口 CDRomDriver，该接口有一个方法，该方法返回值为 void、名为 readDisk()。编写两个类 VivBookS15、SivBookS14 作为 Computer 的子类，并实现父类的抽象方法 getFnLocation()。其中类 VivBookS15 实现接口 CDRomDriver。"},
+  {"type": "code", "ch": 3, "score": 10, "stem": "创建一个名称为 Vehicle 的接口，在接口中添加两个带有一个参数的方法 start() 和 stop()。在两个名称分别为 Bike 和 Bus 的类中实现 Vehicle 接口。创建测试类，创建 Bike 和 Bus 对象，并访问 start() 和 stop() 方法。"},
+  {"type": "code", "ch": 3, "score": 10, "stem": "假设有一个接口 Animal，其中定义了两个抽象方法 eat() 和 makeSound()，分别用于描述动物吃东西和发出声音的行为。请你编写两个具体的类 Dog 和 Cat 分别实现这个接口，并根据各自的特点来实现这两个方法，并实现测试类进行测试。"},
+  {"type": "code", "ch": 3, "score": 10, "stem": "使用面向对象的思想，自定义类和接口，描述鹦鹉、人、飞机。\n提示：(1) 鹦鹉是动物、人是动物、飞机是交通工具，不是一个类别。(2) 鹦鹉和飞机会飞，鹦鹉和人会说话。因此需要实现飞和说话的两个接口。请完成后使用测试类进行功能测试。"},
+  {"type": "code", "ch": 3, "score": 10, "stem": "设计一个游戏角色系统，其中包括不同的角色类型（如战士、法师、盗贼等），每种角色类型都有各自的技能和属性。为了增加系统的灵活性和可扩展性，要求使用抽象类和接口来实现。具体要求如下：\n(1) 定义一个角色接口 Role：该接口声明所有角色必须实现的方法，如 getName()（获取角色名）、attack()（攻击动作）等。\n(2) 定义一个角色抽象类 AbstractRole：该类实现 Role 接口中的部分方法（如 getName()），并声明其他方法（如 getHealth()、setHealth()）作为抽象方法，由子类具体实现。\n(3) 定义具体的角色类（如 Warrior、Mage、Thief）：这些类继承自 AbstractRole 类并实现其抽象方法，同时根据各自的特点添加特定的属性和方法。\n(4) 创建测试类：在主方法中创建不同角色的实例，并调用它们的方法来展示角色信息和执行特定动作。"},
+  {"type": "code", "ch": 3, "score": 10, "stem": "设计一个图书馆管理系统，其中包含不同类型的书籍（如小说、技术书籍、杂志等）。每种书籍都有一些共同的属性和行为，比如书名、作者和借阅方法。但是，不同类型的书籍还可能有其特定的属性和行为。\n(1) 定义一个 Book 接口，包含所有书籍的共通方法，如 getTitle()（获取书名）、getAuthor()（获取作者）和 borrow()（借阅书籍）的声明。\n(2) 创建三个具体的书籍类（Novel、TechnicalBook、Magazine），它们分别实现 Book 接口，并添加各自的特定属性和方法（例如，小说类可以添加 getGenre() 方法，技术书籍类可以添加 getCategory() 方法，杂志类可以添加 getIssueDate() 方法）。\n(3) 编写一个测试类，在这个类中创建不同书籍的实例，并演示如何通过接口引用来调用共通方法，同时也展示如何调用特定于子类的方法。"},
+
+  {"type": "code", "ch": 4, "score": 10, "stem": "定义一个类 Rectangle 代表矩形，其中包括计算面积的方法。再定义一个它的子类 Square 代表正方形，其中也包含计算面积的方法。编写程序，测试新建子类对象的属性和方法。"},
+  {"type": "code", "ch": 4, "score": 10, "stem": "一个关于等边三角形的类 Trival 如下，其中的属性包括三角形的 bian，方法包括：默认构造方法、为 bian 指定初值的构造方法、获取三角形面积 findArea()。试利用方法覆盖的知识，设计三棱柱体类 TriCylinder。（其中 findArea() 为计算三棱柱体的表面积）"},
+  {"type": "code", "ch": 4, "score": 10, "stem": "定义一个 Document 类，包含成员属性 name。从 Document 派生出 Book 子类，重新定义属性 name，增加 PageCount 变量，编写一个应用程序，测试定义的类。"},
+  {"type": "code", "ch": 4, "score": 10, "stem": "编写一个 Java 应用程序，设计一个汽车类 Vehicle，包含的属性有车轮个数 wheels 和车重 weight。小汽车类 Car 是 Vehicle 的子类，其中包含的属性有载人数 loader。卡车类 Truck 是 Car 类的子类，其中包含的属性有载重量 payload。每个类都有构造方法和输出相关数据的方法 show，编写测试类进行测试。"},
+  {"type": "code", "ch": 4, "score": 10, "stem": "利用多态性的知识，设计类 EqualArea，判断圆与三角形面积的大小。（假设 Circle 类和 Trival 类已知）"},
+  {"type": "code", "ch": 4, "score": 10, "stem": "设计一个图形绘制系统。设计一个 Shape 接口，该接口包含一个 draw() 方法，用于绘制图形。设计两个类 Circle 和 Rectangle，它们都实现了 Shape 接口，并实现了 draw() 方法以绘制圆形和矩形。编写一个 GraphicsApp 类，该类包含一个方法 drawShapes，该方法接受一个 Shape 类型的参数确定将要绘制的图形，并调用每个 Shape 对象的 draw() 方法来绘制图形。"},
+  {"type": "code", "ch": 4, "score": 10, "stem": "设计一个手机卡切换系统。现在需要设计一个 Mobile 类，可实现对不同电信公司 Sim 卡的切换。手机卡根据不同运营商有不同种类，例如移动卡 ChinaMobileSim、联通卡 ChinaUnicom、电信卡 TelecoSim 等。每个 Sim 卡都有一个物理 address，并且都有一个地址读取方法 getAddress()，编写一个测试类 Test，实现手机 sim 卡的切换。"},
+  {"type": "code", "ch": 4, "score": 10, "stem": "设计一个汽车生产工厂系统。通过年度的生产制造计划，通知车间工厂将要生产哪种车型。定义 Vehicle 接口或抽象类，包含一些通用的方法（如 move），定义 Car 和 Bike 类，实现 Vehicle 接口或继承 Vehicle 抽象类。设计 VehicleFactory 类，包含根据用户请求创建不同类型 Vehicle 对象的方法。编写测试类，使用 VehicleFactory 获取 Vehicle 对象，并通过 Vehicle 接口调用其方法。"},
+  {"type": "code", "ch": 4, "score": 10, "stem": "定义一个支付功能的接口（或抽象类）Payment，然后创建多个具体支付方式类（如支付宝支付 AliPay 类、微信支付 WechartPay 类、银联支付 BankPay 类等）来实现这个接口（或继承自抽象类）。每个具体支付类都会实现一个支付方法（如 payMethod()），但各自的实现方式会不同。最后，我们在测试类 PayManager 中通过调用 ChoosePayMethode() 方法选择不同的支付方式进行支付，展示多态性。"}
+ ],
+ "warnings": [
+  "题干来自教材照片（第 158、159、160、189、190、205、206、224、225、244 页及 10.6/12.6 课外阅读）的转录，个别标点做了规范化",
+  "教材里的 Teacher extends Person、Teacher 课时费、Student 访问器、Point、Trival 等题库里已经有了，这里只保留不重复的",
+  "所有题为编程题，原书没有给参考答案；判分交给 AI"
+ ]
+}
