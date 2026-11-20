@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """QuizStudio 数据库体检（只读）。
 
-用法：py -3 _dev/db_audit.py [db路径]
+用法：py -3 tools/db_audit.py [db路径]
 不写库、不加锁：用 file:...?mode=ro 打开，服务端在跑也能读。
 """
 import json
@@ -41,8 +41,8 @@ def main():
         p = DB + suffix
         if os.path.exists(p):
             print("  %-8s %10s  %s" % (suffix or "(main)", human(os.path.getsize(p)),
-                                       __import__("time").strftime("%Y-%m-%d %H:%M:%S",
-                                                                   __import__("time").localtime(os.path.getmtime(p)))))
+                                       _importers__("time").strftime("%Y-%m-%d %H:%M:%S",
+                                                                   _importers__("time").localtime(os.path.getmtime(p)))))
     c = con()
 
     section("运行参数")

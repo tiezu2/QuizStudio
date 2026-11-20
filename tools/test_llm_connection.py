@@ -2,8 +2,8 @@
 """一条命令自检 AI 通道：读 quiz_studio_llm.json，发一个最小请求，打印实际走的通道与耗时。
 
 用法：
-    py -3 _dev/test_llm_connection.py
-    py -3 _dev/test_llm_connection.py "出一道 Java 选择题并给答案"
+    py -3 tools/test_llm_connection.py
+    py -3 tools/test_llm_connection.py "出一道 Java 选择题并给答案"
 
 不依赖正在运行的 server.py，直接复用 server 里的配置与 ai_chat。
 """

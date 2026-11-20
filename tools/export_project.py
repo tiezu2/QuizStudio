@@ -11,8 +11,8 @@
       └─ 导出说明.md
 
 用法：
-    py -3 _dev/export_project.py            # 全部
-    py -3 _dev/export_project.py --no-exe   # 不带桌面版
+    py -3 tools/export_project.py            # 全部
+    py -3 tools/export_project.py --no-exe   # 不带桌面版
 """
 import json
 import os
@@ -25,7 +25,7 @@ import zipfile
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STAMP = time.strftime("%Y%m%d-%H%M")
 NAME = "QuizStudio-项目导出-%s" % STAMP
-OUT = os.path.join(ROOT, "_export", NAME)
+OUT = os.path.join(ROOT, "exports", NAME)
 
 FLAT = ["server.py", "index.html", "quiz_studio_llm.json", "quiz_studio_ide.json",
         "README.md", "start_quiz_studio.cmd", "start_local_llm.cmd", "quiz_studio.db"]
@@ -111,8 +111,8 @@ def main():
         "**换机器要注意**：`quiz_studio_ide.json` 里的 `eclipse_exe`、`project_src` 是本机路径，"
         "要用 Eclipse 联动就改成新机器的；`start_local_llm.cmd` 里的本地模型路径同理。", "",
         "## 没打包进来的", "",
-        "- `_dev/`、`_import/`（开发脚本）、`新大题/`（15 张教材照片）、`*.bak-*` 备份、"
-        "`desktop/build|dist`、`__pycache__`、`_export/`。", "",
+        "- `tools/`、`importers/`（开发脚本）、`assets/`（15 张教材照片）、`*.bak-*` 备份、"
+        "`desktop/build|dist`、`__pycache__`、`exports/`。", "",
     ]
     with open(os.path.join(OUT, "导出说明.md"), "w", encoding="utf-8") as f:
         f.write("\n".join(lines))

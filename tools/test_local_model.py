@@ -2,8 +2,8 @@
 """检查本地小模型（Ollama）是否可用，并实测一次判分调用。
 
 用法：
-    py -3 _dev/test_local_model.py
-    py -3 _dev/test_local_model.py --model qwen2.5:7b
+    py -3 tools/test_local_model.py
+    py -3 tools/test_local_model.py --model qwen2.5:7b
 不依赖 server.py 的常驻进程，直接复用它的 ai_chat。
 """
 import json

@@ -5,8 +5,8 @@
     AI 判分时 ref 仍为空，它会自己解题，不会被这份作答带偏。
 
 用法：
-    py -3 _dev/import_school_answers.py --dry     只看会改哪些题
-    py -3 _dev/import_school_answers.py           真写（走 /api/banks 覆盖）
+    py -3 tools/import_school_answers.py --dry     只看会改哪些题
+    py -3 tools/import_school_answers.py           真写（走 /api/banks 覆盖）
 """
 import glob
 import json

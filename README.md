@@ -111,7 +111,7 @@ JDK/JVM/编译运行 → 1；数据类型/运算符 → 2；分支 → 3；循�
 
   1. 打开 <https://bigmodel.cn> 登录 → 控制台 → API Keys → 新建并复制（形如 `xxxxxxxx.yyyyyyyy`）；
   2. 粘进 `quiz_studio_llm.json` 的 `api_key`（或设环境变量 `ZHIPU_API_KEY`）；
-  3. `py -3 _dev\test_llm_connection.py` 自检一句，通了就重启 `server.py`。
+  3. `py -3 tools\test_llm_connection.py` 自检一句，通了就重启 `server.py`。
 
   ```json
   {
@@ -141,7 +141,7 @@ JDK/JVM/编译运行 → 1；数据类型/运算符 → 2；分支 → 3；循�
   端到端 41 秒，14/14 判定齐全，错题都带出了「正确答案：X」。对比免费通道同一批要 90 秒以上。
 
 - 带 Key 的 `quiz_studio_llm.json` 不会通过 HTTP 暴露：`server.py` 的静态兜底有黑名单，
-  `/quiz_studio_llm.json`、`/quiz_studio.db`、`/server.py`、`_dev/`、`_import/`、`*.bak*` 一律 404。
+  `/quiz_studio_llm.json`、`/quiz_studio.db`、`/server.py`、`tools/`、`importers/`、`*.bak*` 一律 404。
 
 ## 六、数据在哪
 
@@ -162,10 +162,10 @@ JDK/JVM/编译运行 → 1；数据类型/运算符 → 2；分支 → 3；循�
 | 提示 402 / 429 限流 | 同一 IP 45 秒内发了第二次请求。服务端会自动等待重试；仍失败就点「重新请求」，或填自己的 Key |
 | 想批量改题 | 导出 JSON → 改 → 重新用 JSON 导入 |
 
-## 八、开发与自测（`_dev/`）
+## 八、开发与自测（`tools/`）
 
 交付只保留 6 个文件在根目录（`index.html` / `server.py` / `start_quiz_studio.cmd` /
-`demo-bank.txt` / `quiz_studio_llm.json` / `README.md`），测试脚本都收在 `_dev/`，不影响使用：
+`demo-bank.txt` / `quiz_studio_llm.json` / `README.md`），测试脚本都收在 `tools/`，不影响使用：
 
 | 文件 | 作用 |
 |---|---|
@@ -180,11 +180,11 @@ JDK/JVM/编译运行 → 1；数据类型/运算符 → 2；分支 → 3；循�
 
 ```bash
 # 跑一次真实 AI 链路（约 1.5 分钟）
-python _dev/_ai_test.py
+python tools/_ai_test.py
 
 # 截图报告页
 chrome --headless=new --window-size=1440,2400 \
-  --screenshot=report.png "http://127.0.0.1:8770/_dev/_shot.html?v=report"
+  --screenshot=report.png "http://127.0.0.1:8770/tools/_shot.html?v=report"
 ```
 
 
@@ -292,11 +292,11 @@ chrome --headless=new --window-size=1440,2400 \
 ### 历史题库补答案（一次性脚本）
 
 ```cmd
-py -3 _import\backfill_answers.py --dry              # 先看要补多少题
-py -3 _import\backfill_answers.py                    # 全部补（客观题答案 + 主观题参考答案）
-py -3 _import\backfill_answers.py --bank bank_ch08    # 只补一卷
-py -3 _import\backfill_code_answers.py               # 编程题参考答案重写成可编译代码
-py -3 _import\backfill_code_answers.py --fix-failing  # 只重写 javac 编不过的
+py -3 importers\backfill_answers.py --dry              # 先看要补多少题
+py -3 importers\backfill_answers.py                    # 全部补（客观题答案 + 主观题参考答案）
+py -3 importers\backfill_answers.py --bank bank_ch08    # 只补一卷
+py -3 importers\backfill_code_answers.py               # 编程题参考答案重写成可编译代码
+py -3 importers\backfill_code_answers.py --fix-failing  # 只重写 javac 编不过的
 ```
 
 - 客观题答案写进 `answer`，主观/编程题参考答案写进 `ref`，都会打 `_aiAnswer: 1` 标记；

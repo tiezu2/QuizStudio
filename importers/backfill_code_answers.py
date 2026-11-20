@@ -4,9 +4,9 @@
 流程：生成 → 去掉顶层 public（一个文件里放多个类）→ javac 试编译
      → 编不过就加大预算重试一次 → 还不行就留着并打 _aiCodeWeak=1
 
-    py -3 _import/backfill_code_answers.py --dry
-    py -3 _import/backfill_code_answers.py
-    py -3 _import/backfill_code_answers.py --bank bank_ch08
+    py -3 importers/backfill_code_answers.py --dry
+    py -3 importers/backfill_code_answers.py
+    py -3 importers/backfill_code_answers.py --bank bank_ch08
 """
 import json
 import os

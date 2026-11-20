@@ -7,8 +7,8 @@
   三、AI 补答案全清单（按卷子分组，供抽查复核）
 
 用法：
-    py -3 _dev/make_issue_docx.py
-    py -3 _dev/make_issue_docx.py --all-ai     # 第三部分包含全部 AI 补的题（默认就是全部）
+    py -3 tools/make_issue_docx.py
+    py -3 tools/make_issue_docx.py --all-ai     # 第三部分包含全部 AI 补的题（默认就是全部）
 """
 import difflib
 import json

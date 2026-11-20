@@ -12,8 +12,8 @@ desktop/quiz_studio_ide.json
 _opened_code.json
 
 # 导出与归档（可重新生成）
-_export/
-_archive/
+exports/
+archive/
 *.zip
 *.bak
 *.bak-*
@@ -22,14 +22,14 @@ _archive/
 desktop/release/*.exe
 
 # 开发过程中的临时文件（脚本、日志、预览图）
-_dev/_*
-_dev/*.log
-_dev/preview_*/
-_dev/*.docx
-_import/*.log
+tools/_*
+tools/*.log
+tools/preview_*/
+tools/*.docx
+importers/*.log
 
 # 素材（体积大，且是教材照片）
-新大题/
+assets/
 
 # 编辑器
 .vscode/

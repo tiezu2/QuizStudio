@@ -1,4 +1,4 @@
-# `_import` — 东软智慧教育平台题库导入
+# `importers` — 东软智慧教育平台题库导入
 
 平台是登录态 SPA，题目通过 `/web-api/` 的 JSON 接口下发。两条路都验证过：
 
@@ -26,7 +26,7 @@
 
 ```powershell
 cd 'E:\桌面映射\Java\QuizStudio答题系统'
-py -3 _import\parse_tongyi.py "_import\统一练习1.html" "_import\统一练习1.json" `
+py -3 importers\parse_tongyi.py "importers\统一练习1.html" "importers\统一练习1.json" `
   "bank_tongyi_1" "Java语言程序设计III · 统一练习-1（200 题 · 373 分）" [--no-chapter]
 ```
 

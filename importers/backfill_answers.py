@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """给题库里所有「没有标准答案」的题跑一遍 AI 作答，并把答案写回数据库。
 
-    py -3 _import/backfill_answers.py --dry            # 只看要补多少题
-    py -3 _import/backfill_answers.py                  # 全部补
-    py -3 _import/backfill_answers.py --bank bank_ch08 # 只补一卷
-    py -3 _import/backfill_answers.py --limit 50       # 只补前 50 题（试水）
+    py -3 importers/backfill_answers.py --dry            # 只看要补多少题
+    py -3 importers/backfill_answers.py                  # 全部补
+    py -3 importers/backfill_answers.py --bank bank_ch08 # 只补一卷
+    py -3 importers/backfill_answers.py --limit 50       # 只补前 50 题（试水）
 
 规则跟前端 index.html 的 applyAiAnswer 保持一致：
   单选/多选 -> 只留 A-H 字母（多选排序去重；题型是猜的且题干像多选时自动纠正为多选）

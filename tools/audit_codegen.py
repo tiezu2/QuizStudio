@@ -33,7 +33,7 @@ for b in banks:
         stem = q.get("stem") or ""
         text, code = server._split_stem(stem)
         is_fix = "FOUND" in code or "改错" in stem or "改正" in stem
-        has_parent = bool(code) and bool(__import__("re").search(r"class\s+[A-Za-z_]\w*\s*\{", code))
+        has_parent = bool(code) and bool(_importers__("re").search(r"class\s+[A-Za-z_]\w*\s*\{", code))
         cls = "" if is_fix else server._guess_answer_class(text, code)
         if has_parent and not is_fix:
             kind = "A"

@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 """把题库单独导出来（不含程序本体）。
 
-    py -3 _dev/export_bank_package.py
+    py -3 tools/export_bank_package.py
 
-产物：_export/题库导出-<时间>/
+产物：exports/题库导出-<时间>/
        ├─ 题库-完整备份.json     含科目/章节/答案/AI 标记，可再导回
        ├─ 题库-全部题目.csv       Excel 直接打开
        ├─ 题库-浏览.html          离线只读浏览（带搜索、按卷折叠）
        ├─ 题库汇总.md             统计与分布
        └─ 分卷/*.json             每卷一个文件
-     _export/题库导出-<时间>.zip
+     exports/题库导出-<时间>.zip
 """
 import csv
 import html
@@ -25,7 +25,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DB = os.path.join(ROOT, "quiz_studio.db")
 STAMP = time.strftime("%Y%m%d-%H%M")
 NAME = "题库导出-%s" % STAMP
-OUT = os.path.join(ROOT, "_export", NAME)
+OUT = os.path.join(ROOT, "exports", NAME)
 
 TYPE_CN = {"single": "单选", "multi": "多选", "judge": "判断", "blank": "填空",
            "short": "简答", "code": "编程"}

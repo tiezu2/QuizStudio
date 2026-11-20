@@ -2,9 +2,9 @@
 """用题库里已有的标准答案当基准，实测「AI 逐题作答」的准确率和耗时。
 
 用法：
-    py -3 _dev/test_answer_quality.py              # 默认 20 题
-    py -3 _dev/test_answer_quality.py --n 40
-    py -3 _dev/test_answer_quality.py --model glm-4-flash
+    py -3 tools/test_answer_quality.py              # 默认 20 题
+    py -3 tools/test_answer_quality.py --n 40
+    py -3 tools/test_answer_quality.py --model glm-4-flash
 """
 import json
 import os

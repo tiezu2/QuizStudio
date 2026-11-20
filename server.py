@@ -1286,7 +1286,7 @@ STATIC = {
 STATIC_DENY_SUFFIX = (".db", ".db-wal", ".db-shm", ".sqlite", ".sqlite3", ".py", ".pyc",
                       ".log", ".iml", ".sh", ".bat", ".ps1", ".cmd")
 STATIC_DENY_NAMES = {"quiz_studio_llm.json"}
-STATIC_DENY_DIRS = {"_dev", "_import", ".idea", ".git", "__pycache__", "out"}
+STATIC_DENY_DIRS = {"tools", "importers", ".idea", ".git", "__pycache__", "out"}
 
 
 def _static_allowed(rel):

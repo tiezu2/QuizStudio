@@ -3,7 +3,7 @@
 """把「东软智慧教育平台」统一练习抽屉的 HTML 解析成 QuizStudio 题库 JSON。
 
 用法：
-    py -3 _import/parse_tongyi.py <输入.html> <输出.json> [bank_id] [标题]
+    py -3 importers/parse_tongyi.py <输入.html> <输出.json> [bank_id] [标题]
 
 只用标准库。解析失败会打印原因而不是抛栈。
 """

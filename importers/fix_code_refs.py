@@ -4,8 +4,8 @@
 判定口径和做题一样：先去掉顶层 public（一个文件放多个类），再 javac -encoding UTF-8。
 生成 → 编译；编不过就加大预算重来；最多两轮，仍然是坏的就保留原样不动。
 
-    py -3 _import/fix_code_refs.py --dry
-    py -3 _import/fix_code_refs.py
+    py -3 importers/fix_code_refs.py --dry
+    py -3 importers/fix_code_refs.py
 """
 import json
 import os

@@ -4,8 +4,8 @@
 index.html 里那段「/* === QS THEME === */ … /* === QS THEME END === */」就是产物，
 真正的样式源文件是 desktop/theme-light.css。改完 CSS 跑一次本脚本即可。
 
-    py -3 _dev/apply_theme.py
-    py -3 _dev/apply_theme.py desktop/theme-light.css
+    py -3 tools/apply_theme.py
+    py -3 tools/apply_theme.py desktop/theme-light.css
 """
 import io
 import os

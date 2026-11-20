@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 """把项目统一成「一个版本」：清掉重复/遗留/构建中间物，只留一套源码 + 一套产物。
 
-    py -3 _dev/unify_version.py --dry    # 只打印会做什么
-    py -3 _dev/unify_version.py          # 真的执行
+    py -3 tools/unify_version.py --dry    # 只打印会做什么
+    py -3 tools/unify_version.py          # 真的执行
 
 做四件事：
  1. 把旧备份（*.bak*）、遗留文件（seed.html / demo-bank.txt / java-bank.json）、
-    重复的 desktop (2)、深色主题、调试 spec、构建中间目录挪到 _archive/日期-统一前/；
+    重复的 desktop (2)、深色主题、调试 spec、构建中间目录挪到 archive/日期-统一前/；
  2. 删掉 __pycache__、运行时状态 _opened_code.json；
  3. 报告统一后的目录树；
- 4. 不动 desktop/release 与 _export（那是要交付的产物）。
+ 4. 不动 desktop/release 与 exports（那是要交付的产物）。
 """
 import os
 import shutil
@@ -18,7 +18,7 @@ import time
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STAMP = time.strftime("%Y%m%d-%H%M")
-ARCHIVE = os.path.join(ROOT, "_archive", "%s-统一前" % STAMP)
+ARCHIVE = os.path.join(ROOT, "archive", "%s-统一前" % STAMP)
 
 LEGACY_FILES = ["seed.html", "demo-bank.txt", "java-bank.json", "_opened_code.json"]
 LEGACY_DIRS = ["desktop (2)", "__pycache__",
@@ -60,8 +60,8 @@ def main():
     for name in LEGACY_DIRS:
         move(os.path.join(ROOT, name), ARCHIVE, dry)
 
-    # 生成的文件挪到 _export 下，别堆在根目录
-    out_dir = os.path.join(ROOT, "_export", "报告")
+    # 生成的文件挪到 exports 下，别堆在根目录
+    out_dir = os.path.join(ROOT, "exports", "报告")
     for name in ("题库问题清单.docx", "题库问题清单.md"):
         src = os.path.join(ROOT, name)
         if os.path.exists(src):

@@ -4,7 +4,7 @@
 流程和前端一致：POST /api/grade 传 pending 项（带 opts、unkeyed），
 再轮询 /api/report 看 judge 是否拿到判定。
 
-用法：py -3 _dev/test_ai_unkeyed.py [题库id] [作答字母]
+用法：py -3 tools/test_ai_unkeyed.py [题库id] [作答字母]
 """
 import json
 import sys
