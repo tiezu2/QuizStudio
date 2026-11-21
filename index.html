@@ -216,6 +216,9 @@ hr{border:none;border-top:1px solid var(--line-2);margin:14px 0}
 
 
 
+
+
+
 /* === QS THEME === */
 /* =========================================================================
    清爽浅色主题 —— 对齐主流在线题库/考试系统（Element Plus / Ant Design 风格）
@@ -421,6 +424,38 @@ hr{border:none; border-top:1px solid var(--line)}
 .qt.on{background:var(--brand-soft); border-color:var(--brand); color:var(--brand)}
 .qt:hover{border-color:#c6e2ff}
 
+/* 解析按行显示：AI 生成的解析一个选项一行 */
+.c-exp{white-space:pre-wrap}
+
+/* ---------- 解析弹窗 ---------- */
+.exp-btn{ margin-left:auto; margin-right:8px; }
+.mask{
+  position:fixed; inset:0; z-index:80; background:rgba(17,24,39,.45);
+  display:flex; align-items:center; justify-content:center; padding:24px;
+}
+.mask.hide{display:none}
+.modal{
+  width:min(680px, 92vw); max-height:80vh; display:flex; flex-direction:column;
+  background:#fff; border-radius:12px; box-shadow:0 18px 48px rgba(0,0,0,.22);
+  overflow:hidden;
+}
+.modal-hd{
+  display:flex; align-items:center; gap:10px; padding:14px 16px;
+  border-bottom:1px solid var(--line); font-size:15px; color:var(--tx);
+}
+.modal-x{
+  margin-left:auto; width:30px; height:30px; border-radius:6px; border:1px solid transparent;
+  background:transparent; color:var(--tx-3); font-size:19px; line-height:1; cursor:pointer;
+}
+.modal-x:hover{ background:#f5f7fa; color:var(--danger); border-color:var(--line); }
+.modal-bd{ padding:14px 16px; overflow:auto; font-size:14.5px; line-height:1.85; color:var(--tx-2); white-space:pre-wrap; }
+.modal-bd .exp-ref{ margin-top:12px; border-top:1px dashed var(--line); padding-top:10px; }
+.modal-bd .exp-ref-hd{ color:var(--brand); font-weight:600; margin-bottom:6px; white-space:normal; }
+.modal-bd .exp-ref pre{
+  margin:0; background:#0a1218; color:#cfe6f2; border-radius:6px; padding:10px 12px;
+  font-family:var(--mono); font-size:13px; line-height:1.7; overflow:auto; white-space:pre;
+}
+.modal-ft{ padding:10px 16px 14px; display:flex; justify-content:flex-end; border-top:1px solid var(--line-2); }
 /* === QS THEME END === */
 </style>
 </head>
@@ -1475,14 +1510,13 @@ function applyAiAnswer(q, raw) {
   return true;
 }
 
-function aiFillAnswers(qs, done) {
-  var todo = qs.filter(function (q) { return !String(q.answer || '').trim() && !String(q.ref || '').trim(); });
-  if (!todo.length || SERVER === '') { done(0); return; }
-  var TYPE_CN = { single: '单选题', multi: '多选题', judge: '判断题', blank: '填空题',
-                  short: '简答题', code: '编程题' };
+var TYPE_CN_FOR_AI = { single: '单选题', multi: '多选题', judge: '判断题', blank: '填空题',
+                       short: '简答题', code: '编程题' };
+
+function aiFetchAnswers(todo, cb) {
   var batch = todo.slice(0, 400).map(function (q) {
     return {
-      id: q.id, type: TYPE_CN[q.type] || q.type, stem: q.stem,
+      id: q.id, type: TYPE_CN_FOR_AI[q.type] || q.type, stem: q.stem,
       opts: (q.options || []).map(function (o) { return o.k + '.' + o.v; }).join(' | ')
     };
   });
@@ -1490,13 +1524,58 @@ function aiFillAnswers(qs, done) {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ questions: batch })
   }).then(function (r) { return r.json(); }).then(function (j) {
-    if (!j || !j.ok) { done(0); return; }
-    var map = j.map || {}, n = 0;
-    qs.forEach(function (q) {
-      if (applyAiAnswer(q, map[q.id])) n++;
+    if (!j || !j.ok) { cb(null); return; }
+    cb(j.map || {});
+  }).catch(function () { cb(null); });
+}
+
+function aiFetchExps(todo, cb) {
+  var batch = todo.slice(0, 300).map(function (q) {
+    return {
+      id: q.id, type: TYPE_CN_FOR_AI[q.type] || q.type, stem: q.stem,
+      opts: (q.options || []).map(function (o) { return o.k + '.' + o.v; }).join(' | '),
+      answer: String(q.answer || q.ref || '').slice(0, 200)
+    };
+  });
+  fetch(SERVER + '/api/explanations', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ questions: batch })
+  }).then(function (r) { return r.json(); }).then(function (j) {
+    if (!j || !j.ok) { cb(null); return; }
+    cb(j.map || {});
+  }).catch(function () { cb(null); });
+}
+
+/* 导入时一键补全：先补答案，再按答案写逐选项解析 */
+function aiFillAnswers(qs, onStage, done) {
+  if (SERVER === '') { done(0, 0); return; }
+  var needAns = qs.filter(function (q) {
+    return !String(q.answer || '').trim() && !String(q.ref || '').trim();
+  });
+  var afterAns = function () {
+    var needExp = qs.filter(function (q) { return !String(q.exp || '').trim(); });
+    if (!needExp.length) { done(0, 0); return; }
+    if (onStage) onStage('AI 写解析…');
+    aiFetchExps(needExp, function (map) {
+      var n = 0;
+      if (map) {
+        qs.forEach(function (q) {
+          var exp = map[q.id];
+          if (exp && !String(q.exp || '').trim()) { q.exp = exp; q._aiExp = 1; n++; }
+        });
+      }
+      done(0, n);
     });
-    done(n);
-  }).catch(function () { done(0); });
+  };
+  if (!needAns.length) { afterAns(); return; }
+  if (onStage) onStage('AI 补答案…');
+  aiFetchAnswers(needAns, function (map) {
+    var n = 0;
+    if (map) {
+      qs.forEach(function (q) { if (applyAiAnswer(q, map[q.id])) n++; });
+    }
+    afterAns();
+  });
 }
 
 function finishSavePending() {
@@ -1520,16 +1599,19 @@ function finishSavePending() {
   switchTab('quiz');
 }
 
-/* 点「保存到题库」：先 AI 补答案（缺答案的题），再入库 */
+/* 点「保存到题库」：先 AI 补答案、再 AI 写解析，然后入库 */
 function savePending() {
   if (!PENDING || !PENDING.questions.length) return;
   var sv = document.getElementById('impSave');
-  var need = PENDING.questions.filter(function (q) {
+  var needAns = PENDING.questions.some(function (q) {
     return !String(q.answer || '').trim() && !String(q.ref || '').trim();
-  }).length;
-  if (need && SERVER) {
-    if (sv) { sv.disabled = true; sv.textContent = 'AI 补答案…'; }
-    aiFillAnswers(PENDING.questions, function () {
+  });
+  var needExp = PENDING.questions.some(function (q) { return !String(q.exp || '').trim(); });
+  if ((needAns || needExp) && SERVER) {
+    if (sv) sv.disabled = true;
+    aiFillAnswers(PENDING.questions, function (stage) {
+      if (sv) sv.textContent = stage;
+    }, function () {
       if (sv) { sv.disabled = false; sv.textContent = '保存到题库'; }
       finishSavePending();
     });
@@ -1571,6 +1653,7 @@ function renderQuiz() {
       '<span class="tag ch" title="点一下可以改章节"><select class="ch-sel" data-chsel="' + q.id + '">' +
         chapOptions(b, q.ch) + '</select></span>' +
       '<span class="q-score">' + q.score + ' 分</span>' +
+      ((q.type === 'code' && (q.exp || q.ref)) ? '<button class="btn sm ghost exp-btn hide" data-expbtn="' + q.id + '">解析</button>' : '') +
       '<span class="mark hide" data-mark></span></div>' +
       '<div class="q-stem">' + rich(q.stem) + '</div>';
     if (q.type === 'single' || q.type === 'multi') {
@@ -1674,6 +1757,58 @@ function harvestIdeFiles(bankId, done) {
   }).then(function (r) { return r.json(); }).then(function (j) {
     done(j && j.ok && j.files ? j.files : []);
   }).catch(function () { done([]); });
+}
+
+/* ---------- 解析弹窗：点题目头上的「解析」打开小窗口 ---------- */
+function findQuestion(qid) {
+  var b = bank();
+  if (!b) return null;
+  var hit = null;
+  b.questions.forEach(function (q) { if (q.id === qid) hit = q; });
+  return hit;
+}
+
+function openExp(qid) {
+  var q = findQuestion(qid);
+  if (!q) return;
+  document.getElementById('expTitle').textContent =
+    '第 ' + q.no + ' 题 · ' + (TYPE_NAME[q.type] || '') + ' 解析';
+  var body = '';
+  if (String(q.exp || '').trim()) {
+    body += '<div class="exp-block">' + rich(q.exp) + '</div>';
+  } else {
+    body += '<div class="muted">这道题还没有解析。</div>';
+  }
+  if ((q.type === 'code' || q.type === 'short') && String(q.ref || '').trim()) {
+    body += '<div class="exp-ref"><div class="exp-ref-hd">参考答案</div><pre>' +
+      esc(String(q.ref)) + '</pre></div>';
+  }
+  document.getElementById('expBody').innerHTML = body;
+  document.getElementById('expMask').classList.remove('hide');
+}
+
+function closeExp() {
+  var m = document.getElementById('expMask');
+  if (m) m.classList.add('hide');
+}
+
+function bindExpModal() {
+  document.addEventListener('click', function (ev) {
+    var btn = ev.target.closest ? ev.target.closest('[data-expbtn]') : null;
+    if (btn) {
+      ev.preventDefault();
+      openExp(btn.getAttribute('data-expbtn'));
+      return;
+    }
+    if (ev.target && ev.target.id === 'expMask') closeExp();
+  });
+  var x = document.getElementById('expClose');
+  var ok = document.getElementById('expOk');
+  if (x) x.addEventListener('click', closeExp);
+  if (ok) ok.addEventListener('click', closeExp);
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Escape') closeExp();
+  });
 }
 
 /* 提交后删除这次生成的作答文件（不回收内容，仅清理） */
@@ -1988,6 +2123,9 @@ function lockQuiz(lock) {
       mk.classList.remove('hide');
       var ex = node.querySelector('[data-exp]');
       if (ex) ex.style.display = 'block';
+      /* 大题（编程题）提交后才能点「解析」看弹窗 */
+      var expBtn = node.querySelector('[data-expbtn]');
+      if (expBtn) expBtn.classList.remove('hide');
       if (r.type === 'single' || r.type === 'multi' || r.type === 'judge') {
         var right = String(r.answer || '').toUpperCase();
         Array.prototype.forEach.call(node.querySelectorAll('.opt'), function (op) {
@@ -2596,6 +2734,7 @@ function selftest() {
 (function init() {
   loadDB();
   bind();
+  bindExpModal();
   fillSubjectSelect();
   renderTabs();
   renderQuiz();
@@ -2611,5 +2750,13 @@ function selftest() {
   }
 })();
 </script>
+<!-- 解析弹窗 -->
+<div class="mask hide" id="expMask">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-hd"><b id="expTitle">题目解析</b><button class="modal-x" id="expClose" aria-label="关闭">×</button></div>
+    <div class="modal-bd" id="expBody"></div>
+    <div class="modal-ft"><button class="btn primary sm" id="expOk">知道了</button></div>
+  </div>
+</div>
 </body>
 </html>

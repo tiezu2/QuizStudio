@@ -35,7 +35,7 @@ ROOT = Path(__file__).resolve().parent
 DB_PATH = ROOT / "quiz_studio.db"
 HOST = "127.0.0.1"
 PORT = 8770
-VERSION = "1.1.0"        # 1.1.0：清理过期占位解析；IDE 配置热加载；Eclipse 索引越界修复
+VERSION = "1.2.0"        # 1.1.0：清理过期占位解析；IDE 配置热加载；Eclipse 索引越界修复
 
 # 免费、免密钥、免注册的文本接口（与 java_quiz 项目同源方案，实测可用）
 PROVIDERS = [
@@ -1011,6 +1011,122 @@ def _pick_letters(s):
     return "".join(sorted(set(c for c in str(s or "").upper() if "A" <= c <= "H")))
 
 
+EXP_SYS = (
+    "你是 Java 课程助教，正在给题目写解析。只输出 JSON，不要代码块标记、不要多余解释。"
+    '格式：{"results":[{"id":"题目id","exp":"解析文本"}]}'
+    "\n解析写法（严格遵守，便于前端逐行显示）："
+    "\n1. 选择题：题干给了几个选项，就必须写几行，一行都不能少（哪怕某选项明显不对也要写）。"
+    "每行格式固定为「A．说法正确 —— 理由」或「A．说法错误 —— 理由」；"
+    "写的是【该选项本身说法】对错，与题目问什么无关；若它就是本题答案，行尾加「【本题答案】」。"
+    "\n2. 最后单独一行：「结论：本题选 X —— 一句话说明为什么」。"
+    "\n3. 判断题：一行「说法正确/说法错误 —— 理由」，再一行「结论：本题判断为 对/错」。"
+    "\n4. 填空题：按空逐行「第 k 空：答案 —— 理由」。"
+    "\n5. 简答/编程题：3~5 行要点（思路、关键 API、常见错误），不要贴整段代码。"
+    "\n6. 每行不超过 60 字；不要用 markdown 符号（* # `），不要用 emoji。"
+    "\n\n必须照抄这个示例的格式（示例有 4 个选项就写了 4 行）："
+    "\nA．说法正确 —— 继承描述的是 is-a 关系"
+    "\nB．说法正确 —— Java 类只能单继承"
+    "\nC．说法错误 —— 子类不能访问父类私有成员【本题答案】"
+    "\nD．说法正确 —— 父类提取共性"
+    "\n结论：本题选 C —— 私有成员不可被子类直接访问"
+)
+
+EXP_BATCH = 5       # 一次送几题写解析
+EXP_CALLS = 25      # 最多几批
+
+
+def _exp_quality_ok(exp, qtype):
+    """选择题必须真的逐个选项写了说明，否则算没写出来（触发单独重问）。"""
+    qt = str(qtype or "")
+    if qt in ("single", "multi") or qt.startswith("单选") or qt.startswith("多选"):
+        return len(re.findall(r"(?m)^\s*[A-H]\s*[．.、]", exp or "")) >= 2
+    return len((exp or "").strip()) >= 10
+
+
+def _postprocess_exp(exp, ans, qtype):
+    """模型经常把「说法对的选项」误标成【本题答案】。
+    这里统一删掉模型自己加的标记，再按题库答案把标记补到正确的选项行上。"""
+    text = str(exp or "").replace("【本题答案】", "").replace("（本题答案）", "").replace("(本题答案)", "")
+    lines = [ln.rstrip() for ln in text.splitlines() if ln.strip()]
+    if not lines:
+        return ""
+    letters = set(c for c in str(ans or "").upper() if "A" <= c <= "H")
+    qt = str(qtype or "")
+    is_choice = qt in ("single", "multi") or qt.startswith("单选") or qt.startswith("多选")
+    is_judge = qt in ("judge",) or qt.startswith("判断")
+    marked = False
+    if is_choice and letters:
+        out = []
+        for ln in lines:
+            head = ln.lstrip()[:1].upper()
+            if head in letters and "——" in ln:
+                ln = ln + " 【本题答案】"
+                marked = True
+            out.append(ln)
+        lines = out
+        if not marked:
+            lines.append("本题答案：%s" % "".join(sorted(letters)))
+    elif is_judge and ans:
+        lines.append("本题答案：%s" % ans)
+    return "\n".join(lines)
+
+
+def _exp_chunk(chunk):
+    """给一批题生成解析，返回 ({qid: 解析文本}, provider)。"""
+    user = "请为下面每道题写解析（含每个选项的对错点）：\n" + json.dumps(
+        [{"id": x["id"], "题型": x.get("type") or "未知", "题干": (x.get("stem") or "")[:600],
+          "选项": (x.get("opts") or "")[:500], "正确答案": x.get("answer") or "（未提供）"}
+         for x in chunk], ensure_ascii=False)
+    txt, provider = ai_chat(EXP_SYS, user, max_tokens=max(900, min(8000, 350 + 180 * len(chunk))))
+    data = parse_json_loose(txt)
+    rows = data.get("results") if isinstance(data, dict) else (data if isinstance(data, list) else [])
+    by_id = {x["id"]: x for x in chunk}
+    got = {}
+    for r in rows:
+        if not isinstance(r, dict):
+            continue
+        qid = str(r.get("id") or "").strip()
+        exp = str(r.get("exp") or "").strip()
+        if not qid or not exp:
+            continue
+        src = by_id.get(qid) or {}
+        got[qid] = _postprocess_exp(exp, src.get("answer"), src.get("type"))[:2200]
+    return got, provider
+def ai_explanations(items):
+    """给每道题写解析。返回 ({qid: 解析}, provider, 送去几题)。少答的题会对半补问。"""
+    out, provider = {}, ""
+    pending = items[: EXP_BATCH * EXP_CALLS]
+
+    def ask(chunk):
+        nonlocal provider
+        if not chunk:
+            return
+        try:
+            got, prov = _exp_chunk(chunk)
+        except Exception as exc:  # noqa: BLE001
+            print("[AI] 解析批次失败：%s" % exc, flush=True)
+            return
+        provider = prov or provider
+        out.update(got)
+        missing = [x for x in chunk if x["id"] not in got]
+        if missing and len(chunk) > 4:
+            half = max(1, len(missing) // 2)
+            ask(missing[:half])
+            ask(missing[half:])
+        elif missing:
+            for x in missing:
+                try:
+                    got2, prov2 = _exp_chunk([x])
+                    provider = prov2 or provider
+                    out.update(got2)
+                except Exception:  # noqa: BLE001
+                    pass
+
+    for i in range(0, len(pending), EXP_BATCH):
+        ask(pending[i:i + EXP_BATCH])
+    return out, provider, len(pending)
+
+
 SOLVE_SYS = (
     "你是 Java 课程助教，请给出每道题的正确答案。只输出 JSON，不要解释、不要代码块标记。"
     '格式：{"results":[{"id":"题目id","answer":"答案"}]}'
@@ -1549,6 +1665,25 @@ class Handler(BaseHTTPRequestHandler):
                   flush=True)
             return self.send_json({"ok": True, "asked": asked, "map": mapping,
                                    "provider": provider})
+        if path == "/api/explanations":
+            payload = self.body_json()
+            items = payload.get("questions") or []
+            if not isinstance(items, list) or not items:
+                return self.send_json({"ok": False, "error": "没有要写解析的题"}, 400)
+            clean = []
+            for x in items[:300]:
+                if not isinstance(x, dict) or not str(x.get("id") or "").strip():
+                    continue
+                clean.append({"id": str(x["id"]), "type": str(x.get("type") or ""),
+                              "stem": str(x.get("stem") or "")[:700],
+                              "opts": str(x.get("opts") or "")[:600],
+                              "answer": str(x.get("answer") or "")[:120]})
+            if not clean:
+                return self.send_json({"ok": False, "error": "题目字段不对"}, 400)
+            mapping, provider, asked = ai_explanations(clean)
+            print("[AI] 解析：送 %d 题，写出 %d 题（%s）" % (asked, len(mapping), provider or "-"),
+                  flush=True)
+            return self.send_json({"ok": True, "asked": asked, "map": mapping, "provider": provider})
         if path == "/api/code/open":
             payload = self.body_json()
             bid = str(payload.get("bankId") or "").strip()
