@@ -221,6 +221,7 @@ hr{border:none;border-top:1px solid var(--line-2);margin:14px 0}
 
 
 
+
 /* === QS THEME === */
 /* =========================================================================
    清爽浅色主题 —— 对齐主流在线题库/考试系统（Element Plus / Ant Design 风格）
@@ -470,6 +471,16 @@ hr{border:none; border-top:1px solid var(--line)}
   border-radius:10px; padding:1px 8px; margin-right:6px; max-width:46%; overflow:hidden;
   text-overflow:ellipsis; white-space:nowrap; }
 
+/* ---------- 科目分类 ---------- */
+.subj-card{ border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin:10px 0; background:#fff; }
+.subj-card:hover{ border-color:#bcd4f0; box-shadow:0 2px 10px rgba(64,158,255,.08); }
+.subj-name{ font-size:16px; font-weight:600; color:var(--tx); margin-bottom:4px; }
+.subj-meta{ font-size:12.5px; color:var(--tx-3); margin-bottom:8px; }
+.subj-kinds{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px; }
+.subj-k{ font-size:12px; color:var(--tx-2); background:#f5f7fa; border:1px solid var(--line-2); border-radius:10px; padding:2px 9px; }
+.subj-k b{ color:var(--brand); }
+.subj-act{ display:flex; gap:8px; }
+
 /* === QS THEME END === */
 </style>
 </head>
@@ -483,6 +494,7 @@ hr{border:none; border-top:1px solid var(--line)}
     </div>
     <div class="tabs">
       <button class="tb" data-tab="bank">题库 · 导入 <i id="tabBank">0 卷</i></button>
+      <button class="tb" data-tab="subject">Java科目 <i id="tabSubj">—</i></button>
       <button class="tb on" data-tab="quiz">答题 <i id="tabQuiz">—</i></button>
       <button class="tb hide" data-tab="chap">章节分类 <i id="tabChap">—</i></button>
       <button class="tb hide" data-tab="report">诊断报告 <i id="tabRep">AI</i></button>
@@ -490,6 +502,15 @@ hr{border:none; border-top:1px solid var(--line)}
     </div>
   </div>
 </div>
+
+<!-- ============ Java 科目 ============ -->
+<section class="wrap hide" id="viewSubject">
+  <div class="card">
+    <div class="card-hd"><h2>科目分类</h2><span class="sp"></span>
+      <span class="muted" id="subjSummary"></span></div>
+    <div id="subjList"></div>
+  </div>
+</section>
 
 <!-- ============ 题库 · 导入 ============ -->
 <section class="wrap hide" id="viewBank">
@@ -1326,6 +1347,55 @@ function answers() {
 /* =========================================================================
    5. 渲染：题库
    ========================================================================= */
+function renderSubjects() {
+  var el = document.getElementById('subjList');
+  if (!el) return;
+  var groups = {}, order = [];
+  DB.banks.forEach(function (b) {
+    var s = bankSubject(b);
+    if (!groups[s]) { groups[s] = []; order.push(s); }
+    groups[s].push(b);
+  });
+  var totalQ = 0;
+  order.forEach(function (s) { groups[s].forEach(function (b) { totalQ += (b.questions || []).length; }); });
+  var sum = document.getElementById('subjSummary');
+  if (sum) sum.textContent = order.length + ' 个科目 · ' + DB.banks.length + ' 卷 · ' + totalQ + ' 题';
+  var tab = document.getElementById('tabSubj');
+  if (tab) tab.textContent = order.length + ' 科';
+  var h = '';
+  order.forEach(function (s) {
+    var list = groups[s], nq = 0;
+    var chs = {}, kinds = { chapter: 0, paper: 0, prog: 0, fix: 0, fill: 0 };
+    list.forEach(function (b) {
+      nq += (b.questions || []).length;
+      (b.questions || []).forEach(function (q) { if (q.ch) chs[q.ch] = 1; });
+      var k = bankKind(b); kinds[k] = (kinds[k] || 0) + 1;
+    });
+    h += '<div class="subj-card">' +
+      '<div class="subj-name">' + esc(s) + '</div>' +
+      '<div class="subj-meta">' + list.length + ' 卷 · ' + nq + ' 题 · ' + Object.keys(chs).length + ' 个章节</div>' +
+      '<div class="subj-kinds">' +
+        '<span class="subj-k">按章节 <b>' + kinds.chapter + '</b></span>' +
+        '<span class="subj-k">按卷子 <b>' + kinds.paper + '</b></span>' +
+        '<span class="subj-k">编程题 <b>' + kinds.prog + '</b></span>' +
+        '<span class="subj-k">改错题 <b>' + kinds.fix + '</b></span>' +
+        '<span class="subj-k">填空题 <b>' + kinds.fill + '</b></span>' +
+      '</div>' +
+      '<div class="subj-act">' +
+        '<button class="btn sm" data-subj-open="' + esc(s) + '">进入这个科目</button>' +
+      '</div></div>';
+  });
+  el.innerHTML = h || '<div class="empty">还没有科目。</div>';
+  Array.prototype.forEach.call(el.querySelectorAll('[data-subj-open]'), function (btn) {
+    btn.addEventListener('click', function () {
+      SUBJECT_FILTER = btn.getAttribute('data-subj-open');
+      BANK_MODE = 'chapter'; TYPE_FILTER = '';
+      switchTab('bank');
+      renderBank();
+    });
+  });
+}
+
 function renderBank() {
   document.getElementById('tabBank').textContent = DB.banks.length + ' 卷';
   var el = document.getElementById('bankList');
@@ -1342,7 +1412,9 @@ function renderBank() {
     if (BANK_MODE === 'paper') return k === 'paper';
     return !!TYPE_KINDS[k] && (!TYPE_FILTER || k === TYPE_FILTER);
   }
-  var list = DB.banks.filter(inMode);
+  var list = DB.banks.filter(function (b) {
+    return inMode(b) && (!SUBJECT_FILTER || bankSubject(b) === SUBJECT_FILTER);
+  });
   var MODE_CN = { chapter: '按章节刷题', type: '按题型刷题', paper: '按卷子刷题' };
   Array.prototype.forEach.call(document.querySelectorAll('[data-mode]'), function (x) {
     var m = x.getAttribute('data-mode');
@@ -1408,6 +1480,7 @@ function renderBank() {
 var PENDING = null;
 var BANK_MODE = 'chapter';          /* 刷题方式：chapter 按章节 / type 按题型 / paper 按卷子 */
 var TYPE_FILTER = '';               /* 按题型时的子筛选：prog / fix / fill / '' 全部 */
+var SUBJECT_FILTER = '';            /* 按科目筛选（空 = 全部科目） */
 /* docx / Word 常见排版兼容：
    ① 题号单独占一行（01 / 02 / 03 …），题内又用 1) 2) 3) 列条目 ——
       这种写法会被误判成题号，这里先把纯数字行改造成标准题号，再压平题内编号。
@@ -2419,13 +2492,14 @@ function exportMarkdown() {
    11. 交互绑定
    ========================================================================= */
 function switchTab(name) {
-  ['bank', 'quiz', 'chap', 'report'].forEach(function (k) {
+  ['bank', 'subject', 'quiz', 'chap', 'report'].forEach(function (k) {
     document.getElementById('view' + k.charAt(0).toUpperCase() + k.slice(1)).classList.toggle('hide', k !== name);
   });
   Array.prototype.forEach.call(document.querySelectorAll('.tb'), function (b) {
     b.classList.toggle('on', b.getAttribute('data-tab') === name);
   });
   var sub = { bank: '导入卷子 → 自动分章 → 答题 → AI 判分诊断',
+              subject: '按科目看全部卷子：进入某个科目就只看这个科目的题',
               quiz: '作答中：选择/填空即时保存，主观题提交后由 AI 阅卷',
               chap: '按章节查看全部题目、答案与错题',
               report: '正确率、薄弱知识点与 AI 错因诊断' }[name];
@@ -2434,6 +2508,7 @@ function switchTab(name) {
   if (name === 'chap') renderChap();
   if (name === 'report') renderReport();
   if (name === 'bank') renderBank();
+  if (name === 'subject') renderSubjects();
   window.scrollTo({ top: 0 });
 }
 

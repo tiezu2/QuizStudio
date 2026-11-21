@@ -219,6 +219,12 @@ KIND_CH_RE = re.compile(r"^\s*第\s*\d+\s*章")
 def _guess_kind(title, bid=""):
     if bid == DEDUP_BANK_ID or "去重视图" in title or KIND_CH_RE.match(title):
         return "chapter"
+    if title.startswith("编程题") or "编程题 ·" in title:
+        return "prog"
+    if title.startswith("改错题") or "改错题 ·" in title:
+        return "fix"
+    if title.startswith("填空题") or "填空题 ·" in title:
+        return "fill"
     return "paper"
 
 
