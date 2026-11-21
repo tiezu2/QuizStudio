@@ -1,0 +1,792 @@
+[
+ {
+  "img": "微信图片_20261119181624_813_29.jpg",
+  "type": "single",
+  "stem": "定义类头时,不可能用到的关键字是？",
+  "options": [
+   {
+    "k": "A",
+    "v": "class"
+   },
+   {
+    "k": "B",
+    "v": "public"
+   },
+   {
+    "k": "C",
+    "v": "extends"
+   },
+   {
+    "k": "D",
+    "v": "static"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181625_814_29.jpg",
+  "type": "single",
+  "stem": "下面方法定义中,不正确的是:",
+  "options": [
+   {
+    "k": "A",
+    "v": "float x(int a,int b){return a-b;}"
+   },
+   {
+    "k": "B",
+    "v": "int x(int a,int b){return a-b;}"
+   },
+   {
+    "k": "C",
+    "v": "int x(int a,int b){return a*b;}"
+   },
+   {
+    "k": "D",
+    "v": "int x(int a,int b){return 1.2*(a-b);}"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181626_815_29.jpg",
+  "type": "single",
+  "stem": "在创建对象时必须（）",
+  "options": [
+   {
+    "k": "A",
+    "v": "先声明对象，然后才能使用对象"
+   },
+   {
+    "k": "B",
+    "v": "先声明对象，为对象分配内存空间，然后才能使用对象"
+   },
+   {
+    "k": "C",
+    "v": "先声明对象，为对象分配内存空间，对对象初始化，然后才能使用对象"
+   },
+   {
+    "k": "D",
+    "v": "上述说法都对"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181634_816_29.jpg",
+  "type": "single",
+  "stem": "下面有关子类继承父类构造方法的描述，其中正确的是( )",
+  "options": [
+   {
+    "k": "A",
+    "v": "(A)创建子类的对象时，先执行子类自己的构造方法，然后执行父类的构造方法"
+   },
+   {
+    "k": "B",
+    "v": "(B)子类可以不调用父类的构造方法"
+   },
+   {
+    "k": "C",
+    "v": "(C)子类必须通过super()关键字调用父类的无参的构造方法"
+   },
+   {
+    "k": "D",
+    "v": "(D)创建子类的对象时，先执行父类的构造方法，然后执行子类自己的构造方法"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181635_817_29.jpg",
+  "type": "single",
+  "stem": "以下关于构造函数的描述错误的是？",
+  "options": [
+   {
+    "k": "A",
+    "v": "构造函数的返回类型只能是void型"
+   },
+   {
+    "k": "B",
+    "v": "构造函数是类的一种特殊函数它的方法名必须与类名相同"
+   },
+   {
+    "k": "C",
+    "v": "构造函数的主要作用是完成对类的对象的初始化工作"
+   },
+   {
+    "k": "D",
+    "v": "一般在创建新对象时,系统会调用构造函数"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181636_818_29.jpg",
+  "type": "single",
+  "stem": "以下关于构造函数的描述错误的是（）。\\n\\n",
+  "options": [
+   {
+    "k": "A",
+    "v": "构造函数的返回类型只能是void型。"
+   },
+   {
+    "k": "B",
+    "v": "构造函数是类的一种特殊函数，它的方法名必须与类名相同。"
+   },
+   {
+    "k": "C",
+    "v": "构造函数的主要作用是完成对类的对象的初始化工作。"
+   },
+   {
+    "k": "D",
+    "v": "一般在创建新对象时，系统会自动调用构造函数。"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181637_819_29.jpg",
+  "type": "single",
+  "stem": "假设A类有如下定义，设a是A类的一个实例，下列语句调用哪个是错误的？\nclass A{\n    int i;\n    static String s;\n    void method10( ) { }\n    static void method20( ) { }\n}",
+  "options": [
+   {
+    "k": "A",
+    "v": "System.out.println(a.i);"
+   },
+   {
+    "k": "B",
+    "v": "a.method10();"
+   },
+   {
+    "k": "C",
+    "v": "A.method10();"
+   },
+   {
+    "k": "D",
+    "v": "A.method20();"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181639_820_29.jpg",
+  "type": "single",
+  "stem": "下列关于静态方法的描述中错误的是",
+  "options": [
+   {
+    "k": "A",
+    "v": "静态方法属于类的共享成员"
+   },
+   {
+    "k": "B",
+    "v": "静态方法是通过“类名.方法名”的方式来调用"
+   },
+   {
+    "k": "C",
+    "v": "静态方法只能被类调用,不能被对象调用"
+   },
+   {
+    "k": "D",
+    "v": "静态方法中可以访问静态变量"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181640_821_29.jpg",
+  "type": "single",
+  "stem": "在Java中，下列说法正确的是（ ）",
+  "options": [
+   {
+    "k": "A",
+    "v": "一个子类可以同时继承多个父类，一个父类也可以有多个子类"
+   },
+   {
+    "k": "B",
+    "v": "一个子类可以同时继承多个父类，但一个父类只有一个子类"
+   },
+   {
+    "k": "C",
+    "v": "一个子类只能同时继承一个父类，一个父类可以有多个子类"
+   },
+   {
+    "k": "D",
+    "v": "上述说法都不对"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181642_822_29.jpg",
+  "type": "single",
+  "stem": "已知类的继承关系如下：\nclass A\nclass B extends A\nclass C extends A\n则以下语句中能够通过编译的是？",
+  "options": [
+   {
+    "k": "A",
+    "v": "A a=new B();"
+   },
+   {
+    "k": "B",
+    "v": "C c=new B();"
+   },
+   {
+    "k": "C",
+    "v": "C c=new A();"
+   },
+   {
+    "k": "D",
+    "v": "B b=new C();"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181644_823_29.jpg",
+  "type": "single",
+  "stem": "父子类在同一个包中,子类不能继承父类的哪个属性()",
+  "options": [
+   {
+    "k": "A",
+    "v": "default"
+   },
+   {
+    "k": "B",
+    "v": "protected"
+   },
+   {
+    "k": "C",
+    "v": "public"
+   },
+   {
+    "k": "D",
+    "v": "private"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181646_824_29.jpg",
+  "type": "single",
+  "stem": "下面关于方法的修饰符,哪个只能在本类中使用()",
+  "options": [
+   {
+    "k": "A",
+    "v": "default"
+   },
+   {
+    "k": "B",
+    "v": "protected"
+   },
+   {
+    "k": "C",
+    "v": "public"
+   },
+   {
+    "k": "D",
+    "v": "private"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181647_825_29.jpg",
+  "type": "single",
+  "stem": "关于类的继承的描述,正确的是(   )",
+  "options": [
+   {
+    "k": "A",
+    "v": "一个类可以继承多个父类"
+   },
+   {
+    "k": "B",
+    "v": "一个类可以具有多个子类"
+   },
+   {
+    "k": "C",
+    "v": "子类可以使用父类的所有方法"
+   },
+   {
+    "k": "D",
+    "v": "子类必须覆盖父类的全部方法"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181649_826_29.jpg",
+  "type": "single",
+  "stem": "覆盖与重载的关系是:( )",
+  "options": [
+   {
+    "k": "A",
+    "v": "覆盖只有发生在父类与子类之间,而重载可以发生在同一个类中"
+   },
+   {
+    "k": "B",
+    "v": "覆盖方法可以不同名,而重载方法必须同名"
+   },
+   {
+    "k": "C",
+    "v": "final修饰的方法可以被覆盖,但不能被重载"
+   },
+   {
+    "k": "D",
+    "v": "覆盖与重载是同一回事"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181651_827_29.jpg",
+  "type": "single",
+  "stem": "以下对封装的描述正确的是？",
+  "options": [
+   {
+    "k": "A",
+    "v": "(A)只能对一个中的方法进行封装，不能对属性进行封装"
+   },
+   {
+    "k": "B",
+    "v": "(B)如果子类继承了父类，对于父类中进行封装的方法，子类仍然可以直接调用"
+   },
+   {
+    "k": "C",
+    "v": "(C)封装的意义不大，因此在编码时尽量不要使用"
+   },
+   {
+    "k": "D",
+    "v": "(D)封装的主要作用在于对外隐藏内部实现细节，增强程序的安全性"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181652_828_29.jpg",
+  "type": "single",
+  "stem": "下列说法中，正确的是（）",
+  "options": [
+   {
+    "k": "A",
+    "v": "类是属性和方法的集合体"
+   },
+   {
+    "k": "B",
+    "v": "数组是无序数据的集合"
+   },
+   {
+    "k": "C",
+    "v": "抽象类可以实例化"
+   },
+   {
+    "k": "D",
+    "v": "类成员数据必须是公有的"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181654_829_29.jpg",
+  "type": "single",
+  "stem": "下面关于抽象类的描述，错误的是（）",
+  "options": [
+   {
+    "k": "A",
+    "v": "抽象类的修饰符可以是public"
+   },
+   {
+    "k": "B",
+    "v": "抽象类的修饰符可以是默认的"
+   },
+   {
+    "k": "C",
+    "v": "抽象类中可以有抽象方法，也可以有非抽象方法"
+   },
+   {
+    "k": "D",
+    "v": "抽象类中可以有抽象方法，但不可以有非抽象方法"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181656_830_29.jpg",
+  "type": "single",
+  "stem": "下面说法正确的是0.",
+  "options": [
+   {
+    "k": "A",
+    "v": "final可修饰类、属性、方法."
+   },
+   {
+    "k": "B",
+    "v": "abstract可修饰类、属性、方法."
+   },
+   {
+    "k": "C",
+    "v": "定义抽象方法需要给出方法的返回值类型、方法名、参数列表和方法体"
+   },
+   {
+    "k": "D",
+    "v": "用final修饰的变量,在程序中可对这个变量的值进行修改."
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181658_831_29.jpg",
+  "type": "single",
+  "stem": "下列类头定义中,错误的是？",
+  "options": [
+   {
+    "k": "A",
+    "v": "public x extends y"
+   },
+   {
+    "k": "B",
+    "v": "public class x extends y"
+   },
+   {
+    "k": "C",
+    "v": "class x extends y implements y1"
+   },
+   {
+    "k": "D",
+    "v": "class x"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181659_832_29.jpg",
+  "type": "single",
+  "stem": "定义一个接口时,下列哪个关键字用不到?",
+  "options": [
+   {
+    "k": "A",
+    "v": "public"
+   },
+   {
+    "k": "B",
+    "v": "extends"
+   },
+   {
+    "k": "C",
+    "v": "interface"
+   },
+   {
+    "k": "D",
+    "v": "class"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181701_833_29.jpg",
+  "type": "multi",
+  "stem": "what is the result when you compil and run the following code?\n\nclass Example\n{\n    \nstatic int myArg=1;\npublic static void main(String [] args)\n    {\n        int myArg;\n        System.out.println(myArg);\n    }\n}",
+  "options": [
+   {
+    "k": "A",
+    "v": "this code compiles and displays 0 in the standard output when run"
+   },
+   {
+    "k": "B",
+    "v": "this code compiles and displays 1 in the standard output when run"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181702_834_29.jpg",
+  "type": "multi",
+  "stem": "int myArg;\\nSystem.out.println(myArg);\\nSelect all right answer:\\n",
+  "options": [
+   {
+    "k": "A",
+    "v": "this code compiles and displays 0 in the statndard output when run"
+   },
+   {
+    "k": "B",
+    "v": "this code compiles and displays 1 in the statndard output when run"
+   },
+   {
+    "k": "C",
+    "v": "this code does not compile because you can't define a local variable names the same as static variab"
+   },
+   {
+    "k": "D",
+    "v": "this code doesn't compile because the local vriable is used before it is initialized"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181704_835_29.jpg",
+  "type": "code",
+  "stem": "what is the result when you compile and run the following code?",
+  "options": [],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181705_836_29.jpg",
+  "type": "multi",
+  "stem": "public void amethod()\n{\nSystem.out.println(j);\nSystem.out.println(b);\n}\nSelect all right answer?",
+  "options": [
+   {
+    "k": "A",
+    "v": "compilation succeeds and at run time on output of 0 and false"
+   },
+   {
+    "k": "B",
+    "v": "compilation succeds and at run time an output of 0 and true"
+   },
+   {
+    "k": "C",
+    "v": "compile time error b is not initialsed"
+   },
+   {
+    "k": "D",
+    "v": "compile time error z must be assigned a char value"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181706_837_29.jpg",
+  "type": "code",
+  "stem": "Given:\n1. class Dog { }\n2. class Beagle extends Dog { }\n3.\n4. class Kennel {\n    5. public static void main(String [] args){\n        6. Beagle b1 = new Beagle();\n        7. Dog dog1 = new Dog();\n        8. Dog dog2 = b1;\n        9. // insert code here\n       10. }\n    11. }\n\nWhich, inserted at line 9, will compile?",
+  "options": [
+   {
+    "k": "A",
+    "v": "Beagle b2 = (Beagle) dog1;"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119181707_838_29.jpg",
+  "type": "multi",
+  "stem": "Dog dog1 = new Dog();\n8.Dog dog2 = b1;\n9// insert code here\n10.}\n11.}\nWhich, inserted at line 9, will compile?",
+  "options": [
+   {
+    "k": "A",
+    "v": "Beagle b2 = (Beagle) dog1;"
+   },
+   {
+    "k": "B",
+    "v": "Beagle b3 = (Beagle) dog2;"
+   },
+   {
+    "k": "C",
+    "v": "Beagle b4 = dog2;"
+   },
+   {
+    "k": "D",
+    "v": "None of the above statements will compile"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119191549_841_29.jpg",
+  "type": "code",
+  "stem": "what is the result when you compile and run the following code?",
+  "options": [],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119191550_842_29.jpg",
+  "type": "multi",
+  "stem": "Select all right answer:",
+  "options": [
+   {
+    "k": "A",
+    "v": "(A)343 340 340"
+   },
+   {
+    "k": "B",
+    "v": "(B)343 340 342"
+   },
+   {
+    "k": "C",
+    "v": "(C)343 341 342"
+   },
+   {
+    "k": "D",
+    "v": "(D)343 341 343"
+   },
+   {
+    "k": "E",
+    "v": "(E)343 341 340"
+   },
+   {
+    "k": "F",
+    "v": "(F)compilation fails"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119191551_843_29.jpg",
+  "type": "multi",
+  "stem": "当你试着编译运行下面的代码的时候，可能会发生什么？\n\nclass Base{\n    abstract public void myfunc();\n    public void another(){\n        System.out.println(\"Another method\");\n    }\n}\n\npublic class Abs extends Base {\n    public static void main(String argv[]){\n        Abs a = new Abs();\n        a.amethod();\n    }\n    \n    public void myfunc(){\n        System.out.println(\"My func\");\n    }\n    \n    public void amethod(){\n    }",
+  "options": [],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119191552_844_29.jpg",
+  "type": "multi",
+  "stem": "System.out.println('My func');\npublic void amethod(){\nmyfunc();\n}",
+  "options": [
+   {
+    "k": "A",
+    "v": "The code will compile and run, printing out the words 'My Func'"
+   },
+   {
+    "k": "B",
+    "v": "The compiler will complain that the Base class is not declared as abstract."
+   },
+   {
+    "k": "C",
+    "v": "The code will compile but complain at run time that the Base class has non abstract methods"
+   },
+   {
+    "k": "D",
+    "v": "The compiler will complain that the method myfunc in the base class has no body, nobody at all to love it"
+   }
+  ],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119191553_845_29.jpg",
+  "type": "code",
+  "stem": "功能:创建一个Employee类,属性有员工工资salary,还有2个构造方法,其中一个没有参数,一个带参数",
+  "options": [],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119191555_847_29.jpg",
+  "type": "code",
+  "stem": "功能:创建一个Telephone类,属性有电话号码number,还有2个构造方法,其中一个没有参数,一个带参数。\n\nclass Telephone {\n    String number;\n    /**********SPACE**********/\n    [?] {\n        number = \"041184835202\";  \n    }\n    Telephone(String number){\n        ************SPACE**********\n    }",
+  "options": [],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119191556_848_29.jpg",
+  "type": "code",
+  "stem": "功能:创建一个Telephone类,属性有电话号码number,还有2个构造方法,其中一个没有参数,一个带参数。\n\nclass Telephone {\n    String number;\n    /**********SPACE**********/\n    【?】(   number=“041184835202”;\n    Telephone(String number){\n        /**********SPACE**********/\n        【?】=number;\n    }\n}",
+  "options": [],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119191557_849_29.jpg",
+  "type": "code",
+  "stem": "功能:创建一个Telephone类，属性有电话费用charge，还有2个构造方法，其中一个没有参数，一个带参数。\n\npublic class Telephone {\n    double charge;\n\n    /********** SPACE **********/\n    [ ]{\n        charge=56.50;\n    }\n    Telephone(double charge){\n    /********** SPACE **********/\n    }",
+  "options": [],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119191558_850_29.jpg",
+  "type": "code",
+  "stem": "功能:创建一个Telephone类,属性有电话费用charge,还有2个构造方法,其中一个没有参数,一个带参数。\n\npublic class Telephone {\n    double charge;\n\n    /********** SPACE **********/\n    [?] {\n        charge=56.50;\n    }\n    Telephone(double charge){\n        /********** SPACE **********/\n        [?] = charge;\n    }\n}",
+  "options": [],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119191559_851_29.jpg",
+  "type": "code",
+  "stem": "题目：定义一个学生类，其中属性字符串类型的有学号和专业，方法有对属性进行访问的访问器方法，请改正程序的错误。\n    class Student {\n        /**********FOUND**********/\n        private int number;\n        private String major;\n        public String getMajor() {\n            /**********FOUND**********/\n            return number;\n        }\n    }",
+  "options": [],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119191600_852_29.jpg",
+  "type": "code",
+  "stem": "程序改错 - 第1题 - 6.0分(共2题，共12.0分)\n\nclass Student\n{\n    /************FOUND************/\n    private int number;\n    private String major;\n\n    public String getMajor()\n    {\n        /************FOUND************/\n        return number;\n    }\n\n    public void setMajor(String major)\n    {\n        this.major = major;\n    }\n\n    public void setNumber(String number)\n    {\n        this.number = number;\n    }\n\n    public String getNumber()\n    {\n        return number;\n    }\n}",
+  "options": [],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119191600_853_29.jpg",
+  "type": "code",
+  "stem": "题目：设计类A和A的派生类B，要求：（1）A类与B类不在同一包内，A有一个数据成员a（为int型）；B中继承了A中的a，又定义了自己的数据成员b（int型）。（2）A中的成员a要求只能被不一个包中的自己的子类看见，不能被不在这个包中的其它类看见。请根据要求修改程序中的错误。\n\nclass A\n{\n    /***********FOUND***********/\n    int a;\n}\n/***********FOUND***********/\n}",
+  "options": [],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119191601_854_29.jpg",
+  "type": "code",
+  "stem": "题目：设计类A和A的派生类B，要求：（1）A类与B类不在同一包内，A有一个数据成员a（为int型）；B中继承了A中的a，又定义了自己的数据成员b（int型）。（2）A中的成员a要求只能被不在一个包中的自己的子类看见，不能被不在一个包中的其它类看见。请根据要求修改程序中的错误。\n\nclass A\n{\n    /************FOUND************/\n    int a;\n    /************FOUND************/\n}\n\nclass B extend A\n{\n    int b;\n}",
+  "options": [],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119191603_855_29.jpg",
+  "type": "code",
+  "stem": "题目:设计一个描述二维平面上点的类Point，要求如下:\n(a)该类需要描述点的双精度浮点型的横坐标和纵坐标。\n(b)提供能够初始化横纵坐标的有参构造方法，要求参数名称与属性同名。\n(c)计算两点间距离的方法distance。\n提示:两点之间距离等于两点横纵坐标之差的平方和再开方\nMath类中求平方根的方法:static double sqrt(double a)",
+  "options": [],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119191604_856_29.jpg",
+  "type": "code",
+  "stem": "程序设计-第1题-10.0分(共4题，共40.0分)\n(a)/以类而受进点时双相度序点的惯主物从和纵主称y。\n(b)提供能够初始化横纵坐标的有参构造方法，要求参数名称与属性同名。\n(c)计算两点间距离的方法distance。\n提示:两点之间距离等于两点横纵坐标之差的平方和再开方\nMath类中求平方根的方法:static double sqrt(double a)\n\n/**\n**********Program**********/\n/************************/\n\n/******************* End **************/\n\npublic class Prog1{\n    public static void main(String[] args){\n        Point p1=new Point(2,3);\n        Point p2=new Point(4,5);\n        System.out.println(“两个点的距离:”+p1.distance(p2));\n    }\n}",
+  "options": [],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119191605_857_29.jpg",
+  "type": "code",
+  "stem": "题目: 定义一个名为Progl的类，包含一个名为radius属性，类型为int，不带参数的构造方法和计算并输出面积方法findArea(面积=3.14*radius*radius)，在main方法中创建Progl类的一个对象c，调用findArea方法。\n\npublic class Progl{\n    /**********Program**********/\n}",
+  "options": [],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119191606_858_29.jpg",
+  "type": "code",
+  "stem": "题目：定义一个名为Progl的类，包含一个名为radius属性，类型为int，不带参数的构造方法和计算并输出面积方法findArea(面积=3.14*radius*radius)，在main方法中创建Progl类的一个对象c，调用findArea方法。\n\npublic class Progl{  \n    /**********Program**********/\n}\n\npublic static void main(String[] args){  \n}\n/********** End **********/",
+  "options": [],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119191607_859_29.jpg",
+  "type": "code",
+  "stem": "现有父类Goods,在此基础上派生出了类Apple，子类定义了自己的属性String类型的类别(kind)，有带参数的构造方法，覆盖了父类的show方法，调用父类被覆盖的show方法，增加打印自己的属性的语句，请实现Apple类的编写。",
+  "options": [],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119191608_860_29.jpg",
+  "type": "code",
+  "stem": "程序设计 - 第3题 - 10.0分（共4题，共40.0分）\n    填写Apple类的方法与。",
+  "options": [],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119191609_861_29.jpg",
+  "type": "code",
+  "stem": "现有父类Goods,在此基础上派生出子类Apple，子类定义了自己的属性String类型的类别(kind)，有带参数的构造方法，覆盖了父类的show方法，调用父类被覆盖的show方法，增加打印自己的属性的语句，请实现Apple类的编写。",
+  "options": [],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119191610_862_29.jpg",
+  "type": "code",
+  "stem": "程序设计-第3题-10.0分(共4题，共40.0分)",
+  "options": [],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119191611_863_29.jpg",
+  "type": "code",
+  "stem": "现有父类Person，在此基础上派生出子类Student，子类定义了自己的属性String类型的学号(studentID)，有不带参数的构造方法，覆盖了父类的print方法，调用父类被覆盖的print方法，增加打印自己的属性的语句，请实现Student类的编写。\n\n    class Person {\n        String id;\n        String name;\n        Person(String id, String name){\n            this.id = id;\n            this.name = name;\n        }\n    }",
+  "options": [],
+  "answer": ""
+ },
+ {
+  "img": "微信图片_20261119191612_864_29.jpg",
+  "type": "code",
+  "stem": "现有父类Person，在此基础上派生出子类Student，子类定义了自己的属性String类型的学号(studentID)，有带参数的构造方法，覆盖了父类的print方法，调用父类被覆盖的print方法，增加打印自己的属性的语句，请实现Student类的编写。",
+  "options": [],
+  "answer": ""
+ }
+]

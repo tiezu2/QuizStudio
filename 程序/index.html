@@ -559,7 +559,7 @@ D. 8
     </div>
 
     <div class="card">
-      <div class="card-hd"><h2>我的题库</h2><span class="banktabs"><button class="btab on" data-kind="chapter">分章节</button><button class="btab" data-kind="paper">原卷子</button></span><span class="sp"></span><span class="muted" id="bankCount"></span></div>
+      <div class="card-hd"><h2>我的题库</h2><span class="banktabs"><button class="btab on" data-kind="chapter">分章节</button><button class="btab" data-kind="paper">原卷子</button><button class="btab" data-kind="prog">编程题</button><button class="btab" data-kind="fix">改错题</button><button class="btab" data-kind="fill">填空题</button></span><span class="sp"></span><span class="muted" id="bankCount"></span></div>
       <div id="bankList"></div>
     </div>
   </div>
@@ -1331,12 +1331,13 @@ function renderBank() {
   }
   var h = '';
   var list = DB.banks.filter(function (b) { return bankKind(b) === BANK_KIND; });
-  var cntCh = DB.banks.filter(function (b) { return bankKind(b) === 'chapter'; }).length;
-  var cntPa = DB.banks.length - cntCh;
+  var NAME = { chapter: '分章节', paper: '原卷子', prog: '编程题', fix: '改错题', fill: '填空题' };
+  var counts = {};
+  DB.banks.forEach(function (b) { var k = bankKind(b); counts[k] = (counts[k] || 0) + 1; });
   Array.prototype.forEach.call(document.querySelectorAll('[data-kind]'), function (x) {
-    x.classList.toggle('on', x.getAttribute('data-kind') === BANK_KIND);
-    x.textContent = (x.getAttribute('data-kind') === 'chapter' ? '分章节 ' : '原卷子 ') +
-      (x.getAttribute('data-kind') === 'chapter' ? cntCh : cntPa);
+    var k = x.getAttribute('data-kind');
+    x.classList.toggle('on', k === BANK_KIND);
+    x.textContent = (NAME[k] || k) + ' ' + (counts[k] || 0);
   });
   if (!list.length) {
     el.innerHTML = '<div class="empty">这个分类下还没有卷子。</div>';
