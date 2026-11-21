@@ -559,7 +559,7 @@ D. 8
     </div>
 
     <div class="card">
-      <div class="card-hd"><h2>我的题库</h2><span class="banktabs"><button class="btab on" data-kind="chapter">分章节</button><button class="btab" data-kind="paper">原卷子</button></span><span class="sp"></span><button class="btn sm ghost" id="dedupBtn" title="把各卷里重复的题合并成一份独立题目视图">去重视图</button><span class="muted" id="bankCount"></span></div>
+      <div class="card-hd"><h2>我的题库</h2><span class="banktabs"><button class="btab on" data-kind="chapter">分章节</button><button class="btab" data-kind="paper">原卷子</button></span><span class="sp"></span><span class="muted" id="bankCount"></span></div>
       <div id="bankList"></div>
     </div>
   </div>
@@ -1271,6 +1271,14 @@ function deleteBankRemote(id) {
 }
 
 /* 启动时：先把本地卷子补传（服务端已有的不覆盖），再以服务端为准拉回来 */
+function dropViewBanks() {
+  /* 去重视图之类的派生卷子不再保留在本地缓存里（服务端已删除） */
+  var before = DB.banks.length;
+  DB.banks = DB.banks.filter(function (b) { return !(b && b._view === 'dedup') || b.id === 'bank_dedup_disabled'; });
+  DB.banks = DB.banks.filter(function (b) { return b && b._view !== 'dedup'; });
+  if (DB.banks.length !== before && bank() === null) DB.activeId = DB.banks[0] ? DB.banks[0].id : null;
+}
+
 function pullBanks() {
   if (!SERVER) { syncStatus('本地缓存（未连服务）'); return; }
   syncStatus('同步中…');
@@ -2496,28 +2504,6 @@ function bind() {
       BANK_KIND = x.getAttribute('data-kind');
       renderBank();
     });
-  });
-  var dedupBtn = document.getElementById('dedupBtn');
-  if (dedupBtn) dedupBtn.addEventListener('click', function () {
-    if (SERVER === '') { alert('需要本地服务支持'); return; }
-    dedupBtn.disabled = true; dedupBtn.textContent = '生成中…';
-    fetch(SERVER + '/api/banks/dedup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
-      .then(function (r) { return r.json(); })
-      .then(function (j) {
-        dedupBtn.disabled = false; dedupBtn.textContent = '去重视图';
-        if (!j || !j.ok) { alert('生成失败：' + ((j && j.error) || '未知')); return; }
-        return fetch(SERVER + '/api/banks/' + j.id + '?t=' + Date.now())
-          .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-          .then(function (k) {
-            if (k && k.ok && k.bank) {
-              DB.banks = DB.banks.filter(function (x) { return x.id !== k.bank.id; });
-              DB.banks.unshift(k.bank);
-            }
-            DB.activeId = j.id; saveDB();
-            renderBank(); renderTabs(); renderQuiz(); renderChap(); renderReport();
-            switchTab('quiz');
-          });
-      }).catch(function () { dedupBtn.disabled = false; dedupBtn.textContent = '去重视图'; });
   });
   document.getElementById('impClear').addEventListener('click', function () {
     document.getElementById('impText').value = '';

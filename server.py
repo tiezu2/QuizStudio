@@ -278,7 +278,10 @@ def _strip_stale_exp(obj):
 
 
 def save_bank(obj, insert_only=False):
-    """按 id 插入或更新一份卷子。返回 'created' / 'updated' / 'exists'。"""
+    """按 id 插入或更新一份卷子。返回 'created' / 'updated' / 'exists' / 'skipped'。"""
+    # 派生视图（去重视图之类）不再入库：页面缓存推上来也直接忽略
+    if isinstance(obj, dict) and (obj.get("_view") or obj.get("id") == DEDUP_BANK_ID):
+        return "skipped"
     _strip_stale_exp(obj)
     now = time.time()
     payload = json.dumps(obj, ensure_ascii=False)
