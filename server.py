@@ -35,6 +35,7 @@ ROOT = Path(__file__).resolve().parent
 DB_PATH = ROOT / "quiz_studio.db"
 HOST = "127.0.0.1"
 PORT = 8770
+VERSION = "1.1.0"        # 1.1.0：清理过期占位解析；IDE 配置热加载；Eclipse 索引越界修复
 
 # 免费、免密钥、免注册的文本接口（与 java_quiz 项目同源方案，实测可用）
 PROVIDERS = [
@@ -263,8 +264,21 @@ def _norm_bank(raw):
     return obj
 
 
+STALE_EXP_RE = re.compile(r"[（(]?\s*(?:本题)?平台未公布标准答案[，,]\s*自动判分会记为未答对\s*[)）]?")
+
+
+def _strip_stale_exp(obj):
+    """删掉早期导入时写进 exp 的过期占位句（这些题现在都有答案、判分正常）。"""
+    for q in obj.get("questions") or []:
+        if isinstance(q, dict) and q.get("exp"):
+            cleaned = STALE_EXP_RE.sub("", q["exp"]).strip("　 \n")
+            if cleaned != q["exp"]:
+                q["exp"] = cleaned
+
+
 def save_bank(obj, insert_only=False):
     """按 id 插入或更新一份卷子。返回 'created' / 'updated' / 'exists'。"""
+    _strip_stale_exp(obj)
     now = time.time()
     payload = json.dumps(obj, ensure_ascii=False)
     with db() as conn:
@@ -1359,7 +1373,7 @@ class Handler(BaseHTTPRequestHandler):
                     n_banks = conn.execute("SELECT COUNT(*) FROM banks").fetchone()[0]
             except Exception:
                 n_banks = None
-            return self.send_json({"ok": True, "service": "quizstudio", "port": PORT,
+            return self.send_json({"ok": True, "service": "quizstudio", "version": VERSION, "port": PORT,
                                    "ai": {"enabled": True,
                                           "providers": [p["name"] for p in PROVIDERS],
                                           "key": bool(API_KEY), "model": MODEL_OVERRIDE or
