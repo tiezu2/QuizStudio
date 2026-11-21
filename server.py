@@ -207,7 +207,19 @@ def _bank_row_to_obj(row, with_data=True):
             pass
         obj["id"] = row["id"]        # 以列为准，避免 data 里被改脏
         obj["title"] = row["title"]
+    # 分类兜底：老数据/老客户端没有 kind 时按标题补上，页面两个标签才不会空
+    if not obj.get("kind"):
+        obj["kind"] = _guess_kind(obj.get("title") or "", obj.get("id") or "")
     return obj
+
+
+KIND_CH_RE = re.compile(r"^\s*第\s*\d+\s*章")
+
+
+def _guess_kind(title, bid=""):
+    if bid == DEDUP_BANK_ID or "去重视图" in title or KIND_CH_RE.match(title):
+        return "chapter"
+    return "paper"
 
 
 W_NS = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
@@ -1540,7 +1552,7 @@ STATIC = {
 STATIC_DENY_SUFFIX = (".db", ".db-wal", ".db-shm", ".sqlite", ".sqlite3", ".py", ".pyc",
                       ".log", ".iml", ".sh", ".bat", ".ps1", ".cmd")
 STATIC_DENY_NAMES = {"quiz_studio_llm.json"}
-STATIC_DENY_DIRS = {"tools", "importers", ".idea", ".git", "__pycache__", "out"}
+STATIC_DENY_DIRS = {"源码","tools","importers",".idea",".git","__pycache__","out","自用","分享","assets"}
 
 
 def _static_allowed(rel):

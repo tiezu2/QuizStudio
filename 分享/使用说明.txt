@@ -1,0 +1,23 @@
+QuizStudio 题库 · 桌面版
+====================================
+双击 QuizStudio.exe：
+  1) 本机起服务（127.0.0.1:8770，被占用会自动换端口）
+  2) 弹控制窗口，并自动打开浏览器
+
+题库数据
+  · 首次运行复制到 %LOCALAPPDATA%\QuizStudio\quiz_studio.db，之后改动都在这里，升级不丢
+  · 控制窗口「打开数据目录」可直达
+
+功能
+  · 题库分「分章节 / 原卷子」；可直接导入卷子、自动分章
+  · 客观题即时判分；每题都有解析（大题提交后点「解析」弹窗查看）
+  · 章节分类、错题回顾、正确率报告
+
+AI 判分（可选，默认关闭）
+  · 编辑 %LOCALAPPDATA%\QuizStudio\quiz_studio_llm.json：enabled 改 true，填 api_key
+
+Eclipse 联动（默认关闭）
+  · 编辑 %LOCALAPPDATA%\QuizStudio\quiz_studio_ide.json ：填 eclipse_exe、project_src
+
+退出 / 排查
+  · 控制窗口关闭即退出；日志在 %LOCALAPPDATA%\QuizStudio\quizstudio.log
