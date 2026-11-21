@@ -220,6 +220,7 @@ hr{border:none;border-top:1px solid var(--line-2);margin:14px 0}
 
 
 
+
 /* === QS THEME === */
 /* =========================================================================
    清爽浅色主题 —— 对齐主流在线题库/考试系统（Element Plus / Ant Design 风格）
@@ -465,6 +466,10 @@ hr{border:none; border-top:1px solid var(--line)}
 }
 .btab:hover{ color:var(--brand); }
 .btab.on{ background:#fff; color:var(--brand); font-weight:600; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+.q-from{ font-size:12px; color:var(--tx-3); background:#f5f7fa; border:1px solid var(--line-2);
+  border-radius:10px; padding:1px 8px; margin-right:6px; max-width:46%; overflow:hidden;
+  text-overflow:ellipsis; white-space:nowrap; }
+
 /* === QS THEME END === */
 </style>
 </head>
@@ -559,7 +564,7 @@ D. 8
     </div>
 
     <div class="card">
-      <div class="card-hd"><h2>我的题库</h2><span class="banktabs"><button class="btab on" data-kind="chapter">分章节</button><button class="btab" data-kind="paper">原卷子</button><button class="btab" data-kind="prog">编程题</button><button class="btab" data-kind="fix">改错题</button><button class="btab" data-kind="fill">填空题</button></span><span class="sp"></span><span class="muted" id="bankCount"></span></div>
+      <div class="card-hd"><h2>我的题库</h2><span class="banktabs"><button class="btab on" data-mode="chapter">按章节刷题</button><button class="btab" data-mode="type">按题型刷题</button><button class="btab" data-mode="paper">按卷子刷题</button></span><span class="banktabs" id="typeSub" style="display:none"><button class="btab" data-type="prog">编程题</button><button class="btab" data-type="fix">改错题</button><button class="btab" data-type="fill">填空题</button></span><span class="sp"></span><span class="muted" id="bankCount"></span></div>
       <div id="bankList"></div>
     </div>
   </div>
@@ -723,10 +728,10 @@ function chapterFromStem(text) {
 /* 答题卡上的章节下拉（手动分章） */
 function chapOptions(b, cur) {
   var list = bankChapters(b);
-  var h = '<option value="0"' + (!cur ? ' selected' : '') + '>未分类</option>';
+  var h = '<option value="0"' + (!cur || String(cur) === '0' ? ' selected' : '') + '>未分类</option>';
   list.forEach(function (c) {
     var id = (c.id != null ? c.id : c.ch);
-    h += '<option value="' + id + '"' + (id === cur ? ' selected' : '') + '>' + esc(c.name) + '</option>';
+    h += '<option value="' + id + '"' + (String(id) === String(cur) ? ' selected' : '') + '>' + esc(c.name) + '</option>';
   });
   h += '<option value="__new">＋ 新建章节…</option>';
   return h;
@@ -1330,15 +1335,37 @@ function renderBank() {
     return;
   }
   var h = '';
-  var list = DB.banks.filter(function (b) { return bankKind(b) === BANK_KIND; });
-  var NAME = { chapter: '分章节', paper: '原卷子', prog: '编程题', fix: '改错题', fill: '填空题' };
-  var counts = {};
-  DB.banks.forEach(function (b) { var k = bankKind(b); counts[k] = (counts[k] || 0) + 1; });
-  Array.prototype.forEach.call(document.querySelectorAll('[data-kind]'), function (x) {
-    var k = x.getAttribute('data-kind');
-    x.classList.toggle('on', k === BANK_KIND);
-    x.textContent = (NAME[k] || k) + ' ' + (counts[k] || 0);
+  var TYPE_KINDS = { prog: 1, fix: 1, fill: 1 };
+  function inMode(b) {
+    var k = bankKind(b);
+    if (BANK_MODE === 'chapter') return k === 'chapter';
+    if (BANK_MODE === 'paper') return k === 'paper';
+    return !!TYPE_KINDS[k] && (!TYPE_FILTER || k === TYPE_FILTER);
+  }
+  var list = DB.banks.filter(inMode);
+  var MODE_CN = { chapter: '按章节刷题', type: '按题型刷题', paper: '按卷子刷题' };
+  Array.prototype.forEach.call(document.querySelectorAll('[data-mode]'), function (x) {
+    var m = x.getAttribute('data-mode');
+    x.classList.toggle('on', m === BANK_MODE);
+    var n = DB.banks.filter(function (b) {
+      var k = bankKind(b);
+      if (m === 'chapter') return k === 'chapter';
+      if (m === 'paper') return k === 'paper';
+      return !!TYPE_KINDS[k];
+    }).length;
+    x.textContent = MODE_CN[m] + ' ' + n;
   });
+  /* 按题型时的三个子筛选 */
+  var subBar = document.getElementById('typeSub');
+  if (subBar) {
+    subBar.style.display = BANK_MODE === 'type' ? 'inline-flex' : 'none';
+    Array.prototype.forEach.call(subBar.querySelectorAll('[data-type]'), function (x) {
+      var k = x.getAttribute('data-type');
+      x.classList.toggle('on', (k || '') === (TYPE_FILTER || ''));
+      var n = DB.banks.filter(function (b) { return bankKind(b) === k; }).length;
+      x.textContent = ({ prog: '编程题', fix: '改错题', fill: '填空题' }[k] || '全部') + ' ' + n;
+    });
+  }
   if (!list.length) {
     el.innerHTML = '<div class="empty">这个分类下还没有卷子。</div>';
     return;
@@ -1379,7 +1406,8 @@ function renderBank() {
 
 /* 导入预览 */
 var PENDING = null;
-var BANK_KIND = 'chapter';          /* 题库页当前分类：chapter 分章节 / paper 原卷子 */
+var BANK_MODE = 'chapter';          /* 刷题方式：chapter 按章节 / type 按题型 / paper 按卷子 */
+var TYPE_FILTER = '';               /* 按题型时的子筛选：prog / fix / fill / '' 全部 */
 /* docx / Word 常见排版兼容：
    ① 题号单独占一行（01 / 02 / 03 …），题内又用 1) 2) 3) 列条目 ——
       这种写法会被误判成题号，这里先把纯数字行改造成标准题号，再压平题内编号。
@@ -1691,6 +1719,8 @@ function renderQuiz() {
       '<span class="tag ch" title="点一下可以改章节"><select class="ch-sel" data-chsel="' + q.id + '">' +
         chapOptions(b, q.ch) + '</select></span>' +
       '<span class="q-score">' + q.score + ' 分</span>' +
+      ((q._from && q._from.length) ? '<span class="q-from" title="这道题出现在这些卷子里">出自：' +
+        esc(q._from.slice(0, 2).join(' / ')) + (q._from.length > 2 ? ' 等' : '') + '</span>' : '') +
       ((q.type === 'code' && (q.exp || q.ref)) ? '<button class="btn sm ghost exp-btn hide" data-expbtn="' + q.id + '">解析</button>' : '') +
       '<span class="mark hide" data-mark></span></div>' +
       '<div class="q-stem">' + rich(q.stem) + '</div>';
@@ -2507,9 +2537,17 @@ function bind() {
     if (!t.trim()) { alert('先把卷子文本粘进来。'); return; }
     previewParse(t);
   });
-  Array.prototype.forEach.call(document.querySelectorAll('[data-kind]'), function (x) {
+  Array.prototype.forEach.call(document.querySelectorAll('[data-mode]'), function (x) {
     x.addEventListener('click', function () {
-      BANK_KIND = x.getAttribute('data-kind');
+      BANK_MODE = x.getAttribute('data-mode');
+      TYPE_FILTER = '';
+      renderBank();
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-type]'), function (x) {
+    x.addEventListener('click', function () {
+      TYPE_FILTER = x.getAttribute('data-type');
+      BANK_MODE = 'type';
       renderBank();
     });
   });

@@ -23,9 +23,9 @@ END = "/* === QS THEME END === */"
 
 
 def main():
-    css_path = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, "desktop", "theme-light.css")
+    css_path = sys.argv[1] if len(sys.argv) > 1 else os.path.join(PROJ, "源码", "desktop", "theme-light.css")
     if not os.path.isabs(css_path):
-        css_path = os.path.join(ROOT, css_path)
+        css_path = css_path if os.path.isabs(css_path) else os.path.join(PROJ, "源码", css_path)
     if not os.path.exists(css_path):
         raise SystemExit("找不到主题文件：%s" % css_path)
 
