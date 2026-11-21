@@ -22,9 +22,11 @@ import sys
 import time
 import zipfile
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if not os.path.exists(os.path.join(ROOT, "server.py")):      # 脚本在 源码\ 下时上跳一层
-    ROOT = os.path.dirname(ROOT)
+PROJ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if not os.path.isdir(os.path.join(PROJ, "源码")):            # 脚本在 源码\tools|importers 下时上跳
+    PROJ = os.path.dirname(PROJ)
+# 运行时文件（server.py / index.html / 数据库 / 配置）都在 PROJ\程序 下
+ROOT = os.path.join(PROJ, "程序") if os.path.isdir(os.path.join(PROJ, "程序")) else PROJ
 STAMP = time.strftime("%Y%m%d-%H%M")
 NAME = "QuizStudio-项目导出-%s" % STAMP
 OUT = os.path.join(ROOT, "exports", NAME)

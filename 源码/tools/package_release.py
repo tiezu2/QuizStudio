@@ -27,9 +27,11 @@ import sys
 import time
 import zipfile
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if not os.path.exists(os.path.join(ROOT, "server.py")):      # 脚本在 源码\ 下时上跳一层
-    ROOT = os.path.dirname(ROOT)
+PROJ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if not os.path.isdir(os.path.join(PROJ, "源码")):            # 脚本在 源码\tools|importers 下时上跳
+    PROJ = os.path.dirname(PROJ)
+# 运行时文件（server.py / index.html / 数据库 / 配置）都在 PROJ\程序 下
+ROOT = os.path.join(PROJ, "程序") if os.path.isdir(os.path.join(PROJ, "程序")) else PROJ
 
 START_CMD = """@echo off
 chcp 65001 >nul
@@ -113,7 +115,7 @@ def copy_web(dst, with_key=True):
         if os.path.exists(src):
             shutil.copy2(src, os.path.join(dst, name))
     for doc in ("README.md", "版本说明.md"):
-        src = os.path.join(ROOT, "源码", doc)
+        src = os.path.join(PROJ, "源码", doc)
         if os.path.exists(src):
             shutil.copy2(src, os.path.join(dst, doc))
     if with_key:
@@ -144,9 +146,9 @@ def main():
     no_exe = "--no-exe" in sys.argv
     ver = read_version()
     n_bank, total, exp, ch, pa = bank_stats()
-    base = ROOT
-    self_dir = os.path.join(ROOT, "自用")
-    share_dir = os.path.join(ROOT, "分享")
+    base = PROJ
+    self_dir = os.path.join(PROJ, "自用")
+    share_dir = os.path.join(PROJ, "分享")
     for d in (self_dir, share_dir):
         if os.path.isdir(d):
             shutil.rmtree(d, ignore_errors=True)
@@ -164,7 +166,7 @@ def main():
                 % (ver, n_bank, ch, pa, total, exp))
 
     # ---------- 分享 ----------
-    exe_src = os.path.join(ROOT, "源码", "desktop", "release", "QuizStudio.exe")
+    exe_src = os.path.join(PROJ, "源码", "desktop", "release", "QuizStudio.exe")
     if not no_exe:
         if os.path.exists(exe_src):
             shutil.copy2(exe_src, os.path.join(share_dir, "QuizStudio.exe"))
@@ -187,15 +189,15 @@ def main():
             "- `自用/` 里有你的 API Key，**不要发给别人**",
             "- 桌面版首次运行会把题库复制到 `%LOCALAPPDATA%\\QuizStudio\\`，之后升级不丢数据",
             ""]
-    with open(os.path.join(ROOT, "版本信息.md"), "w", encoding="utf-8") as f:
+    with open(os.path.join(PROJ, "版本信息.md"), "w", encoding="utf-8") as f:
         f.write("\n".join(info))
 
     made = []
-    made.append(zipdir(self_dir, os.path.join(ROOT, "QuizStudio-v%s-自用.zip" % ver),
+    made.append(zipdir(self_dir, os.path.join(PROJ, "QuizStudio-v%s-自用.zip" % ver),
                        "QuizStudio-v%s-自用" % ver))
-    made.append(zipdir(share_dir, os.path.join(ROOT, "QuizStudio-v%s-分享.zip" % ver),
+    made.append(zipdir(share_dir, os.path.join(PROJ, "QuizStudio-v%s-分享.zip" % ver),
                        "QuizStudio-v%s-分享" % ver))
-    full = os.path.join(ROOT, "QuizStudio-v%s-完整包.zip" % ver)
+    full = os.path.join(PROJ, "QuizStudio-v%s-完整包.zip" % ver)
     with zipfile.ZipFile(full, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as z:
         for d in (self_dir, share_dir):
             for b, _sub, files in os.walk(d):
@@ -205,7 +207,7 @@ def main():
                     fpath = os.path.join(b, fn)
                     z.write(fpath, os.path.join("QuizStudio-v%s" % ver,
                                                 os.path.relpath(fpath, ROOT)))
-        info_md = os.path.join(ROOT, "版本信息.md")
+        info_md = os.path.join(PROJ, "版本信息.md")
         if os.path.exists(info_md):
             z.write(info_md, os.path.join("QuizStudio-v%s" % ver, "版本信息.md"))
     made.append(full)
@@ -215,12 +217,12 @@ def main():
     for f in made:
         print("  %-42s %6.1f MB" % (os.path.basename(f), os.path.getsize(f) / 1024 / 1024))
     print("\n清单：")
-    for b, _d, files in os.walk(base):
-        rel = os.path.relpath(b, base)
-        for fn in sorted(files):
-            p = os.path.join(b, fn)
-            print("  %-56s %8.1f KB" % (fn if rel == "." else os.path.join(rel, fn),
-                                        os.path.getsize(p) / 1024))
+    for d in (self_dir, share_dir):
+        for b, _sub, files in os.walk(d):
+            rel = os.path.relpath(b, PROJ)
+            for fn in sorted(files):
+                p = os.path.join(b, fn)
+                print("  %-56s %8.1f KB" % (os.path.join(rel, fn), os.path.getsize(p) / 1024))
     return 0
 
 

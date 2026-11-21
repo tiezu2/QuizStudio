@@ -27,9 +27,11 @@ from docx.oxml.ns import qn
 from docx.shared import Pt, RGBColor, Cm
 
 BASE = "http://127.0.0.1:8770"
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if not os.path.exists(os.path.join(ROOT, "server.py")):      # 脚本在 源码\ 下时上跳一层
-    ROOT = os.path.dirname(ROOT)
+PROJ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if not os.path.isdir(os.path.join(PROJ, "源码")):            # 脚本在 源码\tools|importers 下时上跳
+    PROJ = os.path.dirname(PROJ)
+# 运行时文件（server.py / index.html / 数据库 / 配置）都在 PROJ\程序 下
+ROOT = os.path.join(PROJ, "程序") if os.path.isdir(os.path.join(PROJ, "程序")) else PROJ
 OUT_DOCX = os.path.join(ROOT, "题库问题清单.docx")
 OUT_MD = os.path.join(ROOT, "题库问题清单.md")
 TYPE_CN = {"single": "单选", "multi": "多选", "judge": "判断", "blank": "填空",
