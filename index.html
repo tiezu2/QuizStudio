@@ -219,6 +219,7 @@ hr{border:none;border-top:1px solid var(--line-2);margin:14px 0}
 
 
 
+
 /* === QS THEME === */
 /* =========================================================================
    清爽浅色主题 —— 对齐主流在线题库/考试系统（Element Plus / Ant Design 风格）
@@ -456,6 +457,14 @@ hr{border:none; border-top:1px solid var(--line)}
   font-family:var(--mono); font-size:13px; line-height:1.7; overflow:auto; white-space:pre;
 }
 .modal-ft{ padding:10px 16px 14px; display:flex; justify-content:flex-end; border-top:1px solid var(--line-2); }
+/* ---------- 题库分类标签 ---------- */
+.banktabs{ display:inline-flex; gap:4px; margin-left:14px; background:#f5f7fa; padding:3px; border-radius:8px; }
+.btab{
+  border:none; background:transparent; color:var(--tx-2); font-size:13px; padding:5px 14px;
+  border-radius:6px; cursor:pointer; transition:all .15s;
+}
+.btab:hover{ color:var(--brand); }
+.btab.on{ background:#fff; color:var(--brand); font-weight:600; box-shadow:0 1px 3px rgba(0,0,0,.08); }
 /* === QS THEME END === */
 </style>
 </head>
@@ -550,7 +559,7 @@ D. 8
     </div>
 
     <div class="card">
-      <div class="card-hd"><h2>我的题库</h2><span class="sp"></span><span class="muted" id="bankCount"></span></div>
+      <div class="card-hd"><h2>我的题库</h2><span class="banktabs"><button class="btab on" data-kind="chapter">分章节</button><button class="btab" data-kind="paper">原卷子</button></span><span class="sp"></span><button class="btn sm ghost" id="dedupBtn" title="把各卷里重复的题合并成一份独立题目视图">去重视图</button><span class="muted" id="bankCount"></span></div>
       <div id="bankList"></div>
     </div>
   </div>
@@ -1306,8 +1315,20 @@ function renderBank() {
     return;
   }
   var h = '';
+  var list = DB.banks.filter(function (b) { return (b.kind || 'paper') === BANK_KIND; });
+  var cntCh = DB.banks.filter(function (b) { return (b.kind || 'paper') === 'chapter'; }).length;
+  var cntPa = DB.banks.length - cntCh;
+  Array.prototype.forEach.call(document.querySelectorAll('[data-kind]'), function (x) {
+    x.classList.toggle('on', x.getAttribute('data-kind') === BANK_KIND);
+    x.textContent = (x.getAttribute('data-kind') === 'chapter' ? '分章节 ' : '原卷子 ') +
+      (x.getAttribute('data-kind') === 'chapter' ? cntCh : cntPa);
+  });
+  if (!list.length) {
+    el.innerHTML = '<div class="empty">这个分类下还没有卷子。</div>';
+    return;
+  }
   var groups = {}, order = [];
-  DB.banks.forEach(function (b) {
+  list.forEach(function (b) {
     var s = bankSubject(b);
     if (!groups[s]) { groups[s] = []; order.push(s); }
     groups[s].push(b);
@@ -1342,6 +1363,7 @@ function renderBank() {
 
 /* 导入预览 */
 var PENDING = null;
+var BANK_KIND = 'chapter';          /* 题库页当前分类：chapter 分章节 / paper 原卷子 */
 /* docx / Word 常见排版兼容：
    ① 题号单独占一行（01 / 02 / 03 …），题内又用 1) 2) 3) 列条目 ——
       这种写法会被误判成题号，这里先把纯数字行改造成标准题号，再压平题内编号。
@@ -2468,6 +2490,34 @@ function bind() {
     var t = document.getElementById('impText').value;
     if (!t.trim()) { alert('先把卷子文本粘进来。'); return; }
     previewParse(t);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-kind]'), function (x) {
+    x.addEventListener('click', function () {
+      BANK_KIND = x.getAttribute('data-kind');
+      renderBank();
+    });
+  });
+  var dedupBtn = document.getElementById('dedupBtn');
+  if (dedupBtn) dedupBtn.addEventListener('click', function () {
+    if (SERVER === '') { alert('需要本地服务支持'); return; }
+    dedupBtn.disabled = true; dedupBtn.textContent = '生成中…';
+    fetch(SERVER + '/api/banks/dedup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        dedupBtn.disabled = false; dedupBtn.textContent = '去重视图';
+        if (!j || !j.ok) { alert('生成失败：' + ((j && j.error) || '未知')); return; }
+        return fetch(SERVER + '/api/banks/' + j.id + '?t=' + Date.now())
+          .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+          .then(function (k) {
+            if (k && k.ok && k.bank) {
+              DB.banks = DB.banks.filter(function (x) { return x.id !== k.bank.id; });
+              DB.banks.unshift(k.bank);
+            }
+            DB.activeId = j.id; saveDB();
+            renderBank(); renderTabs(); renderQuiz(); renderChap(); renderReport();
+            switchTab('quiz');
+          });
+      }).catch(function () { dedupBtn.disabled = false; dedupBtn.textContent = '去重视图'; });
   });
   document.getElementById('impClear').addEventListener('click', function () {
     document.getElementById('impText').value = '';

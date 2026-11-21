@@ -234,3 +234,11 @@ hr{border:none; border-top:1px solid var(--line)}
   font-family:var(--mono); font-size:13px; line-height:1.7; overflow:auto; white-space:pre;
 }
 .modal-ft{ padding:10px 16px 14px; display:flex; justify-content:flex-end; border-top:1px solid var(--line-2); }
+/* ---------- 题库分类标签 ---------- */
+.banktabs{ display:inline-flex; gap:4px; margin-left:14px; background:#f5f7fa; padding:3px; border-radius:8px; }
+.btab{
+  border:none; background:transparent; color:var(--tx-2); font-size:13px; padding:5px 14px;
+  border-radius:6px; cursor:pointer; transition:all .15s;
+}
+.btab:hover{ color:var(--brand); }
+.btab.on{ background:#fff; color:var(--brand); font-weight:600; box-shadow:0 1px 3px rgba(0,0,0,.08); }

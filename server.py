@@ -35,7 +35,7 @@ ROOT = Path(__file__).resolve().parent
 DB_PATH = ROOT / "quiz_studio.db"
 HOST = "127.0.0.1"
 PORT = 8770
-VERSION = "1.2.0"        # 1.1.0：清理过期占位解析；IDE 配置热加载；Eclipse 索引越界修复
+VERSION = "1.3.0"        # 1.1.0：清理过期占位解析；IDE 配置热加载；Eclipse 索引越界修复
 
 # 免费、免密钥、免注册的文本接口（与 java_quiz 项目同源方案，实测可用）
 PROVIDERS = [
@@ -121,6 +121,7 @@ def load_ai_config():
         MAX_JUDGE_CALLS = int(cfg["max_judge_calls"]) if cfg.get("max_judge_calls") else 20
     else:
         MIN_AI_GAP, JUDGE_BATCH, MAX_JUDGE_CALLS = 46.0, 14, 2
+    load_exp_config(cfg)
     print("[AI] 使用配置：%s（%s）｜间隔 %.0fs｜单批 %d 题 × %d 批" % (
         ", ".join(p["name"] for p in PROVIDERS),
         "本地模型" if has_local else ("带 Key" if API_KEY else "免费通道"),
@@ -294,6 +295,76 @@ def save_bank(obj, insert_only=False):
             "INSERT INTO banks(id,title,time,n_questions,created,updated,data) VALUES(?,?,?,?,?,?,?)",
             (obj["id"], obj["title"], obj.get("time") or "", len(obj["questions"]), now, now, payload))
         return "created"
+
+
+# ---------------------------------------------------------------- 去重视图
+DEDUP_BANK_ID = "bank_dedup_view"
+
+
+def _norm_stem(s):
+    """题干归一化：去空白、去空括号、去「第 N 题」，用来判定是不是同一道题。"""
+    t = re.sub(r"\s+", "", str(s or ""))
+    t = re.sub(r"[（(]\s*[)）]", "", t)
+    return re.sub(r"第\s*\d+\s*题", "", t)
+
+
+def build_dedup_bank():
+    """把 21 个卷子里重复出现的题合并成一份「独立题目」卷（约 323 题）。
+
+    同一道题取第一份的答案/解析（各卷已在前一步对齐过，取值一致），
+    并记下它出现在哪些卷子里（_from），方便溯源。
+    """
+    with db() as conn:
+        rows = [(r[0], json.loads(r[1])) for r in
+                conn.execute("SELECT id, data FROM banks WHERE id != ?", (DEDUP_BANK_ID,))]
+    order = {"bank_java3_253": 0}       # 总集优先作为"主版本"
+    groups, seen = [], {}
+    for bid, bank in sorted(rows, key=lambda x: order.get(x[0], 1)):
+        for q in bank.get("questions") or []:
+            key = (q.get("type"), _norm_stem(q.get("stem")))
+            if key in seen:
+                holder = seen[key]
+                if bid not in holder["_from"]:
+                    holder["_from"].append(bid)
+                continue
+            item = dict(q)
+            item["_from"] = [bid]
+            item["_no_orig"] = q.get("no")
+            seen[key] = item
+            groups.append(item)
+
+    chapters = {}
+    questions = []
+    for i, q in enumerate(groups, 1):
+        ch = q.get("ch") or 0
+        if ch and ch not in chapters:
+            cname = None
+            for _bid, bank in rows:
+                for c in bank.get("chapters") or []:
+                    if c.get("id") == ch:
+                        cname = c.get("name")
+                        break
+                if cname:
+                    break
+            chapters[ch] = cname or ("第 %d 章" % ch)
+        nq = dict(q)
+        nq["id"] = "d%d" % i
+        nq["no"] = i
+        questions.append(nq)
+
+    bank = {
+        "id": DEDUP_BANK_ID,
+        "title": "去重视图 · 独立题目（%d 题）" % len(questions),
+        "subject": (rows[0][1].get("subject") if rows else "") or "Java语言程序设计III",
+        "time": time.strftime("%Y-%m-%d %H:%M"),
+        "chapters": [{"id": k, "name": v, "tag": ""} for k, v in sorted(chapters.items())],
+        "questions": questions,
+        "warnings": ["这是自动生成的视图：同一道题只留一份，答案/解析已按官方版本对齐；"
+                     "每次点「去重视图」都会重建"],
+        "_view": "dedup",
+    }
+    save_bank(bank)
+    return bank
 
 
 # ---------------------------------------------------------------- IDE 集成
@@ -927,16 +998,17 @@ def _ai_wait_turn():
         _AI_LAST = time.time()
 
 
-def ai_chat(system, user, max_tokens=800, timeout=None):
+def ai_chat(system, user, max_tokens=800, timeout=None, providers=None):
     """按顺序尝试通道，返回 (文本, provider 名)。全部失败则抛异常。
 
+    providers 传了就只用这批通道（例如解析单独指定另一个模型），不传则用全局 PROVIDERS。
     免费通道是「每 45 秒 1 次」的硬限流：这里先把请求排队，撞上 402 就按
     报文里的 Retry after 等一轮再试一次，而不是立刻放弃。
     """
     timeout = timeout or TIMEOUT
     last = None
     headers = {"Authorization": "Bearer " + API_KEY} if API_KEY else None
-    for pv in PROVIDERS:
+    for pv in (providers or PROVIDERS):
         payload = {
             "model": pv.get("model") or MODEL_OVERRIDE or "openai",
             "messages": [{"role": "system", "content": system},
@@ -1034,6 +1106,38 @@ EXP_SYS = (
 EXP_BATCH = 5       # 一次送几题写解析
 EXP_CALLS = 25      # 最多几批
 
+# 解析可以单独指定模型（判分要快、解析要细）
+EXP_MODEL = "glm-4.5-flash"
+EXP_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions"
+EXP_MAX_TOKENS = 2000
+EXP_PROVIDERS = []
+
+
+def load_exp_config(cfg=None):
+    """从 quiz_studio_llm.json 的 exp 段读解析专用模型，没配就用默认值。"""
+    global EXP_MODEL, EXP_URL, EXP_MAX_TOKENS, EXP_PROVIDERS, EXP_PROVIDERS_HEAVY
+    try:
+        if cfg is None:
+            cfg = json.loads(AI_CONFIG.read_text(encoding="utf-8")) if AI_CONFIG.exists() else {}
+    except Exception:  # noqa: BLE001
+        cfg = {}
+    sec = cfg.get("exp") or {}
+    if isinstance(sec, dict):
+        EXP_MODEL = str(sec.get("model") or EXP_MODEL)
+        EXP_URL = str(sec.get("url") or EXP_URL)
+        try:
+            EXP_MAX_TOKENS = int(sec.get("max_tokens") or EXP_MAX_TOKENS)
+        except (TypeError, ValueError):
+            pass
+    if not EXP_URL.endswith("/chat/completions"):
+        EXP_URL = EXP_URL.rstrip("/") + "/chat/completions"
+    heavy = "glm-4.5-flash"
+    if isinstance(sec, dict):
+        heavy = str(sec.get("model_heavy") or heavy)
+    EXP_PROVIDERS = [{"name": "exp", "url": EXP_URL, "model": EXP_MODEL}]
+    EXP_PROVIDERS_HEAVY = [{"name": "exp-heavy", "url": EXP_URL, "model": heavy}]
+    print("[AI] 解析用模型：客观题 %s ｜ 大题 %s" % (EXP_MODEL, heavy), flush=True)
+
 
 def _exp_quality_ok(exp, qtype):
     """选择题必须真的逐个选项写了说明，否则算没写出来（触发单独重问）。"""
@@ -1071,13 +1175,19 @@ def _postprocess_exp(exp, ans, qtype):
     return "\n".join(lines)
 
 
-def _exp_chunk(chunk):
-    """给一批题生成解析，返回 ({qid: 解析文本}, provider)。"""
+def _exp_chunk(chunk, providers=None):
+    """给一批题生成解析，返回 ({qid: 解析文本}, provider)。
+
+    providers 传了就用那套模型（大题走 glm-4.5-flash，客观题走 glm-4-flash）。
+    """
     user = "请为下面每道题写解析（含每个选项的对错点）：\n" + json.dumps(
         [{"id": x["id"], "题型": x.get("type") or "未知", "题干": (x.get("stem") or "")[:600],
           "选项": (x.get("opts") or "")[:500], "正确答案": x.get("answer") or "（未提供）"}
          for x in chunk], ensure_ascii=False)
-    txt, provider = ai_chat(EXP_SYS, user, max_tokens=max(900, min(8000, 350 + 180 * len(chunk))))
+    txt, provider = ai_chat(EXP_SYS, user,
+                            max_tokens=min(EXP_MAX_TOKENS, max(1200, 600 * len(chunk))),
+                            timeout=max(TIMEOUT, 180),
+                            providers=providers or EXP_PROVIDERS or None)
     data = parse_json_loose(txt)
     rows = data.get("results") if isinstance(data, dict) else (data if isinstance(data, list) else [])
     by_id = {x["id"]: x for x in chunk}
@@ -1092,41 +1202,52 @@ def _exp_chunk(chunk):
         src = by_id.get(qid) or {}
         got[qid] = _postprocess_exp(exp, src.get("answer"), src.get("type"))[:2200]
     return got, provider
+def _is_heavy(item):
+    """大题/简答走更细的模型，客观题走快的模型。"""
+    t = str(item.get("type") or "")
+    return t in ("编程题", "简答题", "code", "short") or t.startswith("编程") or t.startswith("简答")
+
+
 def ai_explanations(items):
-    """给每道题写解析。返回 ({qid: 解析}, provider, 送去几题)。少答的题会对半补问。"""
-    out, provider = {}, ""
+    """给每道题写解析：大题用 glm-4.5-flash，客观题用 glm-4-flash。
+
+    返回 ({qid: 解析}, provider 标签, 送去几题)。模型少答的题会对半补问。
+    """
+    out, labels = {}, []
     pending = items[: EXP_BATCH * EXP_CALLS]
 
-    def ask(chunk):
-        nonlocal provider
+    def ask(chunk, providers):
         if not chunk:
             return
         try:
-            got, prov = _exp_chunk(chunk)
+            got, prov = _exp_chunk(chunk, providers)
         except Exception as exc:  # noqa: BLE001
             print("[AI] 解析批次失败：%s" % exc, flush=True)
             return
-        provider = prov or provider
+        if prov and prov not in labels:
+            labels.append(prov)
         out.update(got)
         missing = [x for x in chunk if x["id"] not in got]
         if missing and len(chunk) > 4:
             half = max(1, len(missing) // 2)
-            ask(missing[:half])
-            ask(missing[half:])
+            ask(missing[:half], providers)
+            ask(missing[half:], providers)
         elif missing:
             for x in missing:
                 try:
-                    got2, prov2 = _exp_chunk([x])
-                    provider = prov2 or provider
+                    got2, prov2 = _exp_chunk([x], providers)
+                    if prov2 and prov2 not in labels:
+                        labels.append(prov2)
                     out.update(got2)
                 except Exception:  # noqa: BLE001
                     pass
 
-    for i in range(0, len(pending), EXP_BATCH):
-        ask(pending[i:i + EXP_BATCH])
-    return out, provider, len(pending)
-
-
+    heavy = [x for x in pending if _is_heavy(x)]
+    light = [x for x in pending if not _is_heavy(x)]
+    for group, providers in ((light, EXP_PROVIDERS), (heavy, EXP_PROVIDERS_HEAVY)):
+        for i in range(0, len(group), EXP_BATCH):
+            ask(group[i:i + EXP_BATCH], providers)
+    return out, " / ".join(labels), len(pending)
 SOLVE_SYS = (
     "你是 Java 课程助教，请给出每道题的正确答案。只输出 JSON，不要解释、不要代码块标记。"
     '格式：{"results":[{"id":"题目id","answer":"答案"}]}'
@@ -1665,6 +1786,14 @@ class Handler(BaseHTTPRequestHandler):
                   flush=True)
             return self.send_json({"ok": True, "asked": asked, "map": mapping,
                                    "provider": provider})
+        if path == "/api/banks/dedup":
+            try:
+                bank = build_dedup_bank()
+            except Exception as exc:  # noqa: BLE001
+                return self.send_json({"ok": False, "error": "生成失败：%s" % exc}, 500)
+            print("[DEDUP] 去重视图：%d 题" % len(bank["questions"]), flush=True)
+            return self.send_json({"ok": True, "id": bank["id"], "title": bank["title"],
+                                   "n": len(bank["questions"])})
         if path == "/api/explanations":
             payload = self.body_json()
             items = payload.get("questions") or []
