@@ -1308,7 +1308,9 @@ function dropViewBanks() {
   /* 去重视图之类的派生卷子不再保留在本地缓存里（服务端已删除） */
   var before = DB.banks.length;
   DB.banks = DB.banks.filter(function (b) { return !(b && b._view === 'dedup') || b.id === 'bank_dedup_disabled'; });
-  DB.banks = DB.banks.filter(function (b) { return b && b._view !== 'dedup'; });
+  DB.banks = DB.banks.filter(function (b) {
+    return b && b._view !== 'dedup' && !b._hidden && b.id !== 'bank_java3_253';
+  });
   if (DB.banks.length !== before && bank() === null) DB.activeId = DB.banks[0] ? DB.banks[0].id : null;
 }
 

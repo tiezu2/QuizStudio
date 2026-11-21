@@ -1663,7 +1663,8 @@ class Handler(BaseHTTPRequestHandler):
             with db() as conn:
                 rows = conn.execute(
                     "SELECT id,title,time,n_questions,created,updated,data "
-                    "FROM banks ORDER BY updated DESC").fetchall()
+                    "FROM banks WHERE id NOT IN ('bank_java3_253', 'bank_dedup_view') "
+                    "ORDER BY updated DESC").fetchall()
             return self.send_json({"ok": True,
                                    "banks": [_bank_row_to_obj(r, with_data) for r in rows]})
         if path.startswith("/api/banks/"):
