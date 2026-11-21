@@ -662,6 +662,13 @@ function bankChapters(b) {
   if (b && b.chapters && b.chapters.length) return b.chapters;
   return CHS;
 }
+function bankKind(b) {
+  /* 服务端已写 kind；老缓存没有就按标题兜底判断 */
+  if (b && b.kind) return b.kind;
+  var t = String((b && b.title) || '');
+  return (/^\s*第\s*\d+\s*章/.test(t) || t.indexOf('去重视图') >= 0) ? 'chapter' : 'paper';
+}
+
 function bankSubject(b) { return (b && b.subject) || '未分类科目'; }
 function chapFind(b, ch) {
   var list = bankChapters(b);
@@ -1323,8 +1330,8 @@ function renderBank() {
     return;
   }
   var h = '';
-  var list = DB.banks.filter(function (b) { return (b.kind || 'paper') === BANK_KIND; });
-  var cntCh = DB.banks.filter(function (b) { return (b.kind || 'paper') === 'chapter'; }).length;
+  var list = DB.banks.filter(function (b) { return bankKind(b) === BANK_KIND; });
+  var cntCh = DB.banks.filter(function (b) { return bankKind(b) === 'chapter'; }).length;
   var cntPa = DB.banks.length - cntCh;
   Array.prototype.forEach.call(document.querySelectorAll('[data-kind]'), function (x) {
     x.classList.toggle('on', x.getAttribute('data-kind') === BANK_KIND);
