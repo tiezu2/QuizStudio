@@ -306,3 +306,43 @@ py -3 importers\backfill_code_answers.py --fix-failing  # 只重写 javac 编不
 
 > 注意：AI 补的答案不是标准答案（客观题实测约 65% 准），判分时会以它为准。如果发现某题明明答对却被判错，
 > 大概率是这道题的 AI 答案错了，按 `_aiAnswer` 标记把这题的 `answer` 手工改掉即可。
+---
+
+## 克隆下来怎么跑（仓库不带题库）
+
+仓库里**不含** `quiz_studio.db`（题库数据是你自己的，已加入 .gitignore）。别人 clone 后是空题库，需要自己准备数据。
+
+### 1. 启动
+```cmd
+cd 程序
+py -3 server.py
+```
+然后浏览器打开 http://127.0.0.1:8770/ ，或直接双击仓库根目录的 `启动QuizStudio.cmd`。
+
+> 只需要 Python 3.8+，无第三方依赖。
+
+### 2. 导入题库（三选一）
+- **粘贴文本**：题库页左侧「导入卷子」→ 粘贴题目文本 → 解析预览 → 保存到题库
+- **上传文件**：支持 `.txt / .md / .json / .docx`
+- **用打包版**：拿一份 `QuizStudio-v*-分享.zip`，里面 `网页版（干净版）/quiz_studio.db` 是现成题库，复制到 `程序/` 即可
+
+### 3. 配置（可选，都可缺省）
+| 文件 | 作用 | 说明 |
+|---|---|---|
+| `程序/quiz_studio_llm.example.json` | AI 判分/写解析模板 | 复制为 `quiz_studio_llm.json`，填 `api_key` 后把 `enabled` 改 true |
+| `程序/quiz_studio_ide.json` | Eclipse 联动 | 填 `eclipse_exe` 与 `project_src` 后 `enabled` 改 true |
+
+### 4. 目录说明
+```
+程序/        运行必需：server.py、index.html、配置、启动脚本（数据库放这里）
+源码/        tools（拆卷/校验/打包）、importers（OCR 导入）、desktop（exe 源码）、assets、文档
+启动QuizStudio.cmd
+```
+
+### 5. 常用脚本
+```cmd
+py -3 源码/tools/make_choice_banks.py      :: 选择题按章节拆卷
+py -3 源码/tools/rebuild_bigq_all.py       :: 大题按类型+章节重建
+py -3 源码/tools/verify_option_truth.py    :: 解析与选项真值一致性校验
+py -3 源码/tools/package_release.py        :: 打「自用/分享」两个包
+```
