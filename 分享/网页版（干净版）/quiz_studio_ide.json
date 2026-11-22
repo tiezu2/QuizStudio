@@ -1,8 +1,0 @@
-{
-  "_说明": "Eclipse 联动。要用就改 enabled=true，并填 eclipse_exe 与 project_src。",
-  "enabled": false,
-  "clearOnSubmit": false,
-  "eclipse_exe": "",
-  "project_src": "",
-  "package": "bank"
-}
