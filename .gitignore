@@ -52,3 +52,8 @@ assets/
 自用/
 分享/
 *.zip
+_*.log
+_ocr_new.json
+_ocr_new_qs.json
+_option_truth.json
+_*.json
