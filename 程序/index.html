@@ -1367,7 +1367,7 @@ function renderSubjects() {
   var h = '';
   order.forEach(function (s) {
     var list = groups[s], nq = 0;
-    var chs = {}, kinds = { chapter: 0, paper: 0, prog: 0, fix: 0, fill: 0 };
+    var chs = {}, kinds = { chapter: 0, paper: 0, choice: 0, prog: 0, fix: 0, fill: 0 };
     list.forEach(function (b) {
       nq += (b.questions || []).length;
       (b.questions || []).forEach(function (q) { if (q.ch) chs[q.ch] = 1; });
@@ -1379,6 +1379,7 @@ function renderSubjects() {
       '<div class="subj-kinds">' +
         '<span class="subj-k">按章节 <b>' + kinds.chapter + '</b></span>' +
         '<span class="subj-k">按卷子 <b>' + kinds.paper + '</b></span>' +
+        '<span class="subj-k">选择题 <b>' + kinds.choice + '</b></span>' +
         '<span class="subj-k">编程题 <b>' + kinds.prog + '</b></span>' +
         '<span class="subj-k">改错题 <b>' + kinds.fix + '</b></span>' +
         '<span class="subj-k">填空题 <b>' + kinds.fill + '</b></span>' +
@@ -1407,7 +1408,7 @@ function renderBank() {
     return;
   }
   var h = '';
-  var TYPE_KINDS = { prog: 1, fix: 1, fill: 1 };
+  var TYPE_KINDS = { choice: 1, prog: 1, fix: 1, fill: 1 };
   function inMode(b) {
     var k = bankKind(b);
     if (BANK_MODE === 'chapter') return k === 'chapter';
@@ -1437,7 +1438,7 @@ function renderBank() {
       var k = x.getAttribute('data-type');
       x.classList.toggle('on', (k || '') === (TYPE_FILTER || ''));
       var n = DB.banks.filter(function (b) { return bankKind(b) === k; }).length;
-      x.textContent = ({ prog: '编程题', fix: '改错题', fill: '填空题' }[k] || '全部') + ' ' + n;
+      x.textContent = ({ choice: '选择题', prog: '编程题', fix: '改错题', fill: '填空题' }[k] || '全部') + ' ' + n;
     });
   }
   if (!list.length) {

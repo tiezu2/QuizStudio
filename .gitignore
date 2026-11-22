@@ -42,3 +42,8 @@ assets/
 
 # 运行时（打包时生成，不进仓库）
 程序/_opened_code.json
+
+# 题库数据（本地私有，不进仓库）
+*.db
+*.db-shm
+*.db-wal
