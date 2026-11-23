@@ -57,3 +57,6 @@ _ocr_new.json
 _ocr_new_qs.json
 _option_truth.json
 _*.json
+答题系统V1.0/程序/*.db
+答题系统V1.0/程序/*.db-shm
+答题系统V1.0/程序/*.db-wal
