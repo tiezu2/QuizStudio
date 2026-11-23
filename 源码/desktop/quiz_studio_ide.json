@@ -1,8 +1,0 @@
-{
-  "_说明": "桌面版默认关闭 Eclipse 联动：拿到安装包的机器不一定装了 Eclipse。要用就在「打开数据目录」里编辑本文件，把 enabled 改成 true，并填好 eclipse_exe 和 project_src。",
-  "_字段": "enabled=总开关；eclipse_exe=Eclipse 可执行文件，留空则自动探测；project_src=Eclipse 工程的 src 目录；package=生成的 Java 包名。",
-  "enabled": false,
-  "eclipse_exe": "",
-  "project_src": "",
-  "package": "bank"
-}
