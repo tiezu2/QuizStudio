@@ -1,9 +1,0 @@
-{
-  "_说明": "把题库里的「大题」一键丢进 Eclipse 作答。点答题页上的「在 Eclipse 里作答」，服务端会在 project_src 下生成 <package>/Playground.java（题目注释 + 题目自带的类），调起 Eclipse 打开它；提交评分后把文件内容清空（保留文件本身，免得 Eclipse 把它当成外部新文件）。改完这个文件不用重启服务（每次请求都会重读）。",
-  "_字段": "enabled=总开关；clearOnSubmit=提交后是否把 Playground.java 清空（默认 false：不清空，避免 Eclipse 报「访问编译单元时出错」）；eclipse_exe=Eclipse 可执行文件，留空则自动找正在运行的 Eclipse 或常见安装路径；project_src=Eclipse 工程的 src 目录；package=生成的 Java 包名。",
-  "enabled": true,
-  "clearOnSubmit": false,
-  "eclipse_exe": "C:\\Users\\Deabpool\\eclipse\\java-2024-03\\eclipse\\eclipse.exe",
-  "project_src": "E:\\桌面映射\\Java\\Java_oop\\school\\src",
-  "package": "bank"
-}
