@@ -2579,6 +2579,9 @@ function closeTab(id) {
   DB.tabs = DB.tabs || [];
   var i = DB.tabs.indexOf(id);
   if (i < 0) return;
+  /* 关闭试卷 = 清库：这份卷的作答、报告、章节进度全部丢弃 */
+  if (DB.answers && DB.answers[id]) delete DB.answers[id];
+  if (DB.report && DB.report.bankId === id) { DB.report = null; REPORT = null; }
   DB.tabs.splice(i, 1);
   DB.tabsTouched = true;
   if (!DB.tabs.length) {
