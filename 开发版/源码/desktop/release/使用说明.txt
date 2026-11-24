@@ -1,0 +1,34 @@
+QuizStudio 题库 · 桌面版
+====================================
+双击 QuizStudio.exe 就会：
+  1) 在本机起一个小服务（127.0.0.1:8770，被占用会自动换端口）；
+  2) 弹出控制窗口，并自动用浏览器打开答题界面。
+
+题库数据
+  · 首次运行会把内置题库（21 卷 / 1037 题）复制到：
+      %LOCALAPPDATA%\QuizStudio\quiz_studio.db
+  · 之后新增/修改的卷子都保存在这里，升级程序不会丢；
+  · 控制窗口里点「打开数据目录」可以直接看到这个文件。
+
+功能
+  · 导入卷子（txt / md / json / docx），自动按科目分章
+  · 答题、客观题即时判分、章节分类、错题回顾、正确率报告
+  · AI 判分与诊断（默认关闭，需要自己填 API Key）
+
+AI 判分（可选）
+  · 默认关闭，纯离线可用（题库里每道题都有答案）
+  · 想开启：编辑 %LOCALAPPDATA%\QuizStudio\quiz_studio_llm.json，
+    把 enabled 改成 true 并填 api_key（智谱 BigModel 免费模型即可），然后重启程序。
+
+Eclipse 联动（桌面版默认关闭）
+  · 源码/网页版：答题页点「在 Eclipse 里作答」，会在工程 src 下生成
+    <package>\Playground.java 并调起 Eclipse，提交后清空内容（保留文件）。
+  · 桌面版默认关闭（别人机器不一定装 Eclipse）。要用就编辑
+      %LOCALAPPDATA%\QuizStudio\quiz_studio_ide.json
+    把 enabled 改成 true，填好 eclipse_exe 和 project_src，然后重启程序。
+
+退出
+  · 控制窗口里点关闭按钮 → 确认退出，本地服务会一起停掉。
+
+排查
+  · 日志在 %LOCALAPPDATA%\QuizStudio\quizstudio.log
